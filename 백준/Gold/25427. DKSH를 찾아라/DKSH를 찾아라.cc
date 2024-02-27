@@ -66,7 +66,7 @@ void solve() {
     int N;
     cin >> N;
 
-    int d, k, s, h;
+    ll d, k, s, h;
     d = k = s = h = 0;
 
     while (N--) {
