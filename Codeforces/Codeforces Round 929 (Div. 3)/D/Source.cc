@@ -60,27 +60,26 @@ int dist(pii a, pii b) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
+    vector<int> v(N);
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        cin >> v[i];
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    sort(v.begin(), v.end());
+    if (v[0] != v[1]) {
+        cout << "YES" << endl;
+        return;
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
+    for (int i = 0; i < v.size(); i++) {
+        if (v[i] % v[0] != 0) {
+            cout << "YES" << endl;
+            return;
+        }
     }
-    else cout << 1 << endl;
-
+    cout << "NO" << endl;
 
 
 }
