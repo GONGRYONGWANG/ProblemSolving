@@ -60,28 +60,38 @@ int dist(pii a, pii b) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+int arr[100001];
 void solve() {
     
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+    arr[0] = 0;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        arr[i] += arr[i - 1];
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
-    }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
 
-
+    int Q;
+    cin >> Q;
+    while (Q--) {
+        int l, u;
+        cin >> l >> u;
+        int left = l;
+        int right = N;
+        while (right-left>1) {
+            int mid = (left + right) / 2;
+            if (arr[mid] - arr[l - 1] > u) {
+                right = mid;
+            }
+            else left = mid;
+        }
+        if (u - arr[left] + arr[l - 1] <= arr[right] - arr[l - 1] - u - 1) {
+            cout << left << " ";
+        }
+        else cout << right << " ";
+    }
+    cout << endl;
 
 }
 
