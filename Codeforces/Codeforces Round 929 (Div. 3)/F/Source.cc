@@ -60,28 +60,50 @@ int dist(pii a, pii b) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+bool board[1000][1000];
+int visited[1000][1000];
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
-    int N;
-    cin >> N;
-
-    int total = 0;
+    int N, M;
+    cin >> N >> M;
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        for (int j = 0; j < M; j++) {
+            cin >> board[i][j];
+            visited[i][j] = -1;
+        }
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    queue<vector<int>> q;
+    q.push({ 0,0,0 });
+    visited[0][0] = 0;
+    while (!q.empty()) {
+        vector<int> node = q.front();
+        q.pop();
+        int x = node[0];
+        int y = node[1];
+        int t = node[2];
+        if (!board[(x + 1) % N][y] && !board[(x + 2) % N][y] && visited[(x + 2) % N][y] == -1) {
+            q.push({ (x + 2) % N,y,t + 1 });
+            visited[(x + 2) % N][y] = t + 1;
+        }
+        if (y + 1 < M && !board[(x + 1) % N][y + 1] && visited[(x + 1) % N][y + 1] == -1) {
+            q.push({ (x + 1) % N,y + 1,t + 1 });
+            visited[(x + 1) % N][y + 1] = t + 1;
+        }
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
+    int ans = inf;
+    for (int i = 0; i < N; i++) {
+        if (visited[i][M - 1] != -1) {
+            int t = visited[i][M - 1];
+            ans = min(ans, t + (i + 1 + N - t % N) % N);
+        }
     }
-    else cout << 1 << endl;
-
-
+    if (ans == inf) {
+        cout << -1 << endl;
+    }
+    else {
+        cout << ans << endl;
+    }
 
 }
 
