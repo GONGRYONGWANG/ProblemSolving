@@ -59,28 +59,71 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+}
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+int board[2][200000];
+int visit[2][200000];
+bool visited[2][200000];
+
+struct cmp {
+    bool operator()(vector<int> a, vector<int> b) {
+        if (a[0] == b[0]) return a[1] > b[1];
+        return a[0] > b[0];
+    }
+};
+
 void solve() {
     
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < N; j++) {
+            char x;
+            cin >> x;
+            board[i][j] = x - '0';
+            visit[i][j] = 0;
+            visited[i][j] = false;
+        }
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    vector<int> arr(N+1, -1);
+    visit[0][0] = 1;
+    pq<vector<int>,vector<vector<int>>, cmp> q;
+    q.push({ 0,board[0][0],0,0 });
+    while (!q.empty()) {
+        vector<int> v = q.top();
+        q.pop();
+        int t = v[0];
+        int val = v[1];
+        int x = v[2];
+        int y = v[3];
+        if (arr[t] != -1 && arr[t] < val) continue;
+        if (visited[x][y]) continue;
+        visited[x][y] = true;
+        arr[t] = val;
+        if (x != 1) {
+            visit[1][y] += visit[x][y];
+            q.push({ t + 1,board[1][y],1,y });
+        }
+        if (y != N - 1) {
+            visit[x][y + 1] += visit[x][y];
+            q.push({ t + 1,board[x][y + 1],x,y + 1 });
+        }
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
+    for (int i = 0; i <= N; i++) {
+        cout << arr[i];
     }
-    else cout << 1 << endl;
-
+    cout << endl;
+    cout << visit[1][N - 1] << endl;
 
 
 }
@@ -90,6 +133,7 @@ int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
