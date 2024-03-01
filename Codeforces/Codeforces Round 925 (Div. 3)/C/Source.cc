@@ -37,7 +37,7 @@ const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
-string debug = "output: ";
+string debug = "ans: ";
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -49,49 +49,73 @@ ll gcd(ll a, ll b) {
     return a;
 }
 
-ll lcm(ll a, ll b) {
-    ll g = gcd(a, b);
-    return a / g * b;
-}
-
 
 int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
     
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
+    vector<int> arr(N);
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        cin >> arr[i];
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    if (arr[0] == arr[N - 1]) {
+        int l = N;
+        int r = 0;
+        for (int i = 1; i < N - 1; i++) {
+            if (arr[i] != arr[0]) {
+                l = i;
+                break;
+            }
+        }
+        for (int i = N - 2; i >= 1; i--) {
+            if (arr[i] != arr[0]) {
+                r = i;
+                break;
+            }
+        }
+        if (r < l) {
+            cout << 0 << endl;
+            return;
+        }
+        cout << r - l + 1 << endl;
+        return;
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
+    int l;
+    for (int i = 1; i < N; i++) {
+        if (arr[i] != arr[0]) {
+            l = i;
+            break;
+        }
     }
-    else cout << 1 << endl;
+    int ans = N - l;
 
-
-
+    int r;
+    for (int j = N - 2; j >= 0; j--) {
+        if (arr[j] != arr[N - 1]) {
+            r = j;
+            break;
+        }
+    }
+    ans = min(ans, r + 1);
+    cout <<ans << endl;
 }
 
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
     while (T--) {
         solve();
     }
+
     return 0;
 }
