@@ -59,29 +59,65 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+}
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
+    int K = 0;
+    for (int i = 1; i < N; i++) {
+        cout << "? " << K << " " << K << " " << i << " " << i << endl;
+        cout << flush;
+        char x;
         cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        if (x == '<') {
+            K = i;
+        }
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
-    }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
 
+    vector<int> v;
+    if (K != 0) v.push_back(0);
+    else v.push_back(1);
 
+    for (int i = 0; i < N; i++) {
+        if (i == K || i == v.back()) continue;
+        cout << "? " << K << " " << v.back() << " " << K << " " << i << endl;
+        cout << flush;
+        char x;
+        cin >> x;
+        if (x == '<') {
+            v.clear();
+            v.push_back(i);
+        }
+        else if (x == '=') {
+            v.push_back(i);
+        }
+    }
+    
+    int ans = v[0];
+    for (int i = 1; i < v.size(); i++) {
+        cout << "? " << ans << " " << ans << " " << v[i] << " " << v[i] << endl;
+        cout << flush;
+        char x;
+        cin >> x;
+        if (x == '>') {
+            ans = v[i];
+        }
+    }
+    cout << "! " << K << " " << ans << endl;
+    cout << flush;
 
 }
 
@@ -90,6 +126,7 @@ int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
