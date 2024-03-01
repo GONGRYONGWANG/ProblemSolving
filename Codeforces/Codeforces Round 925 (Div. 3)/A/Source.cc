@@ -37,7 +37,7 @@ const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
-string debug = "output: ";
+string debug = "ans: ";
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -49,37 +49,50 @@ ll gcd(ll a, ll b) {
     return a;
 }
 
-ll lcm(ll a, ll b) {
-    ll g = gcd(a, b);
-    return a / g * b;
-}
-
 
 int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
-    
+
     int N;
     cin >> N;
-    int ans = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        ans += abs(x);
+    vector<int> v = { 1,1,1 };
+    N -= 3;
+    while (N != 0 && v[2]<26) {
+        N -= 1;
+        v[2] += 1;
     }
-    cout << ans << endl;
+    while (N != 0 && v[1] < 26) {
+        v[1] += 1;
+        N -= 1;
+    }
+    while (N != 0 && v[0] < 26) {
+        v[0] += 1;
+        N -= 1;
+    }
+    for (int i = 0; i < 3; i++) {
+        cout << char('a' + v[i] - 1);
+    }
+    cout << endl;
+
+
+
 }
 
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
     while (T--) {
         solve();
     }
+
     return 0;
 }
