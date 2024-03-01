@@ -1,2 +1,2 @@
-# B. Turtle Math: Fast Three Task
-https://codeforces.com/contest/1933/problem/B
+# B. Make Equal
+https://codeforces.com/contest/1931/problem/B
