@@ -37,7 +37,7 @@ const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
-string debug = "output: ";
+string debug = "ans: ";
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -49,49 +49,67 @@ ll gcd(ll a, ll b) {
     return a;
 }
 
-ll lcm(ll a, ll b) {
-    ll g = gcd(a, b);
-    return a / g * b;
-}
-
 
 int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
     
-    vector<bool> mod(3, 0);
-    int N;
-    cin >> N;
-
-    int total = 0;
-    for (int i = 0; i < N; i++) {
+    int N, K;
+    cin >> N >> K;
+    if (N == 1) {
         int x;
         cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        cout << "yes" << endl;
+        return;
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    vector<ll> arr(N+1);
+    ll x;
+    cin >> x;
+    arr[x] = 0;
+    for (int i = 1; i < N; i++) {
+        cin >> x;
+        arr[x] = i * 2;
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
+    K -= 1;
+    bool ans = true;
+    while(K--) {
+        cin >> x;
+        cin >> x;
+        if (arr[x] == 0) arr[x] = 2;
+        ll prv = arr[x];
+        for (int i = 2; i < N; i++) {
+            cin >> x;
+            if (arr[x] == 0) {
+                arr[x] = prv + 2;
+            }
+            if (arr[x] == prv) {
+                arr[x] += 1;
+            }
+            if (arr[x] < prv) {
+                ans = false;
+            }
+            prv = arr[x];
+        }
     }
-    else cout << 1 << endl;
-
-
+    if (ans) cout << "yes" << endl;
+    else cout << "no" << endl;
 
 }
 
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
     while (T--) {
         solve();
     }
+
     return 0;
 }
