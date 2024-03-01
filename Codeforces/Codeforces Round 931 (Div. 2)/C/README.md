@@ -1,2 +1,2 @@
-# B. Turtle Math: Fast Three Task
-https://codeforces.com/contest/1933/problem/B
+# C. Find a Mine
+https://codeforces.com/contest/1934/problem/C
