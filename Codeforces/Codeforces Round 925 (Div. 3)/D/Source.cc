@@ -37,7 +37,7 @@ const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
-string debug = "output: ";
+string debug = "ans: ";
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -49,49 +49,48 @@ ll gcd(ll a, ll b) {
     return a;
 }
 
-ll lcm(ll a, ll b) {
-    ll g = gcd(a, b);
-    return a / g * b;
-}
-
 
 int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
-    int N;
-    cin >> N;
-
-    int total = 0;
+    int N, x, y;
+    cin >> N >> x >> y;
+    map<int, map<ll,ll>> m;
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        int a;
+        cin >> a;
+        m[a % y][a % x] += 1;
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+
+    ll ans = 0;
+    for (auto it = m.begin(); it != m.end(); it++) {
+        for (auto iter = (*it).second.begin(); iter != (*it).second.end(); iter++) {
+            if ((*iter).first * 2 % x == 0) {
+                ans += (*iter).second * ((*iter).second - 1);
+            }
+            else {
+                (*it).second[(x - (*iter).first) % x];
+                ans += (*iter).second * ((*it).second[(x - (*iter).first) % x]);
+            }
+        }
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
-
-
-
+    cout << ans / 2 << endl;
 }
 
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
     while (T--) {
         solve();
     }
+
     return 0;
 }
