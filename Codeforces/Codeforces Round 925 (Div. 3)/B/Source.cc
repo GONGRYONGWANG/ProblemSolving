@@ -37,7 +37,7 @@ const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
-string debug = "output: ";
+string debug = "ans: ";
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -49,38 +49,33 @@ ll gcd(ll a, ll b) {
     return a;
 }
 
-ll lcm(ll a, ll b) {
-    ll g = gcd(a, b);
-    return a / g * b;
-}
-
 
 int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
+    vector<ll> arr(N);
+    ll total = 0;
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        cin >> arr[i];
+        total += arr[i];
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    ll unit = total / N;
+    ll psum = 0;
+    for (int i = 0; i < N; i++) {
+        if (total - psum > unit * (N - i)) {
+            cout << "no" << endl;
+            return;
+        }
+        psum += arr[i];
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
-
+    cout << "yes" << endl;
 
 
 }
@@ -88,10 +83,12 @@ void solve() {
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
     while (T--) {
         solve();
     }
+
     return 0;
 }
