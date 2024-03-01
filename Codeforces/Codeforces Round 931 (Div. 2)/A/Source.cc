@@ -59,18 +59,34 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+} 
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
-    
+
     int N;
     cin >> N;
-    int ans = 0;
+    vector<int> v;
     for (int i = 0; i < N; i++) {
         int x;
         cin >> x;
-        ans += abs(x);
+        v.push_back(x);
     }
-    cout << ans << endl;
+    sort(v.begin(), v.end());
+    cout << 2*(v[N - 1] + v[N - 2] - v[0] - v[1]) << endl;
+
+
+
 }
 
 
@@ -78,6 +94,7 @@ int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
