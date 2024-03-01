@@ -1,2 +1,2 @@
-# A. Turtle Puzzle: Rearrange and Negate
-https://codeforces.com/contest/1933/problem/A
+# A. Recovering a Small String
+https://codeforces.com/contest/1931/problem/A
