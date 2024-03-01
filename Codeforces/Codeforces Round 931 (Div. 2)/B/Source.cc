@@ -59,37 +59,39 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+} 
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+
+int arr[30] = { 0,1,2,1,2,3,1,2,3,2,1,2,2,2,3,1,2,3,2,3,2,2,3,3,3,2,3,3,3,4 };
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
     int N;
     cin >> N;
-
-    int total = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+    int ret = (N / 30 * 2) + arr[N % 30];
+    if (N>30 && N%30+15<30) {
+        ret = min(ret, N / 30 * 2 - 1 + arr[N % 30 + 15]);
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
-    }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
-
-
+    cout << ret << endl;
 
 }
 
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
