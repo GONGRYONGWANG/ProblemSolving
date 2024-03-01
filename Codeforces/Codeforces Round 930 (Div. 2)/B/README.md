@@ -1,2 +1,2 @@
-# B. Turtle Math: Fast Three Task
-https://codeforces.com/contest/1933/problem/B
+# B. Binary Path
+https://codeforces.com/contest/1937/problem/B
