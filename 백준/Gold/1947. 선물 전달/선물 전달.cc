@@ -73,19 +73,25 @@ int comb(int n, int r) {
 
 ll mod = 1e9;
 
-ll DP[1000001];
-ll dp(int x) {
-    if (x == 1) return 0;
-    if (DP[x]) return DP[x];
-    return DP[x] = (ll)(x - 1) * (dp(x-2) + dp(x-1)) % mod;
-}
-
 void solve() {
-    int N;
+    ll N;
     cin >> N;
-    DP[1] = 0;
-    DP[2] = 1;
-    cout << dp(N);
+    if (N == 1) {
+        cout << 0;
+        return;
+    }
+    else if (N == 2) {
+        cout << 1;
+        return;
+    }
+    ll ret = 1;
+    ll prv = 0;
+    for (ll i = 3; i <= N; i++) {
+        ll tmp = ret;
+        ret = (i - 1) * (ret + prv) % mod;
+        prv = tmp;
+    }
+    cout << ret;
 }
 
 
