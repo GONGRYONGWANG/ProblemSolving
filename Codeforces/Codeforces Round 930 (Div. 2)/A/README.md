@@ -1,2 +1,2 @@
-# A. Turtle Puzzle: Rearrange and Negate
-https://codeforces.com/contest/1933/problem/A
+# A. Shuffle Party
+https://codeforces.com/contest/1937/problem/A
