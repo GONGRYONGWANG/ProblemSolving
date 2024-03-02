@@ -73,21 +73,22 @@ int comb(int n, int r) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-
+ll arr[1001];
 void solve() {
     int N;
     cin >> N;
-    vector<ll> arr(N);
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
     }
 
-    sort(arr.begin(), arr.end());
+    sort(arr, arr+N);
 
     unordered_set<ll> sum;
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            sum.insert(arr[i] + arr[j]);
+            if (arr[i] + arr[j] < arr[N - 1]) {
+                sum.insert(arr[i] + arr[j]);
+            }
         }
     }
 
@@ -99,10 +100,7 @@ void solve() {
             }
         }
     }
-
 }
-
-
 
 int main() {
     ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
