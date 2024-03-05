@@ -29,10 +29,12 @@ typedef unsigned int uint;
 typedef complex<double> cpx;
 #define pq priority_queue
 #define endl "\n"
+
 //int dx[4] = { 1,-1,0,0 };
 //int dy[4] = { 0,0,1,-1 };
 //int dx[8] = { 1,1,1,-1,-1,-1,0,0 };
 //int dy[8] = { 1,0,-1,1,0,-1,1,-1 };
+
 const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
@@ -59,27 +61,44 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+}
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+
 void solve() {
-    
-    int N;
-    cin >> N;
-    int ans = 0;
-    for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        ans += abs(x);
+
+    int n;
+    string s;
+    cin >> n >> s;
+    string rs = s;
+    reverse(rs.begin(), rs.end());
+    if (s > rs) {
+        cout << rs << s;
     }
-    cout << ans << endl;
+    else cout << s;
+    cout << endl;
+
+
+
 }
 
-
 int main() {
-    ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+    ios_base::sync_with_stdio(false); cin.tie(NULL);
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
+
     return 0;
 }
