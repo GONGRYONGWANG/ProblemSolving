@@ -29,10 +29,12 @@ typedef unsigned int uint;
 typedef complex<double> cpx;
 #define pq priority_queue
 #define endl "\n"
+
 //int dx[4] = { 1,-1,0,0 };
 //int dy[4] = { 0,0,1,-1 };
 //int dx[8] = { 1,1,1,-1,-1,-1,0,0 };
 //int dy[8] = { 1,0,-1,1,0,-1,1,-1 };
+
 const ll INF = 1e18;
 const int inf = 1e9;
 const double pi = 3.14159265358979323846;
@@ -59,39 +61,62 @@ int dist(pii a, pii b) {
     return (a.first - b.first) * (a.first - b.first) + (a.second - b.second) * (a.second - b.second);
 }
 
+/*
+int COMB[100][100];
+int comb(int n, int r) {
+    if (r == 0) return 1;
+    if (n == r) return 1;
+    if (COMB[n][r]) return COMB[n][r];
+    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
+}
+*/
+
 //////////////////////////////////////////////////////////////////////////////////////
+
+
+
 void solve() {
-    
-    vector<bool> mod(3, 0);
-    int N;
-    cin >> N;
-
-    int total = 0;
+    int N, L;
+    cin >> N >> L;
+    vector<pll> arr(N);
     for (int i = 0; i < N; i++) {
-        int x;
-        cin >> x;
-        total += x;
-        mod[x % 3] = 1;
+        cin >> arr[i].second;
+        cin >> arr[i].first;
     }
-    if (total % 3 == 0) {
-        cout << 0 << endl;
+    sort(arr.begin(), arr.end());
+    for (int i = 0; i < N; i++) {
+        swap(arr[i].first, arr[i].second);
     }
-    else if (total % 3 == 1 && !mod[1]) {
-        cout << 2 << endl;
-    }
-    else cout << 1 << endl;
 
-
+    int ans = 0;
+    for (int i = 0; i < N; i++) {
+        pq<ll> q;
+        ll total = 0;
+        for (int j = i; j < N; j++) {
+            if (arr[j].second - arr[i].second > L) break;
+            q.push(arr[j].first);
+            total += arr[j].first;
+            while (total + arr[j].second - arr[i].second > L) {
+                total -= q.top();
+                q.pop();
+            }
+            ans = max(ans, (int)q.size());
+        }
+    }
+    cout << ans << endl;
 
 }
 
 
+
 int main() {
-    ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
+    ios_base::sync_with_stdio(false); cin.tie(NULL);
     int T;
     cin >> T;
+    // T = 1;
     while (T--) {
         solve();
     }
+
     return 0;
 }
