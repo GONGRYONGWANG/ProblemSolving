@@ -1,2 +1,2 @@
-# B. Turtle Math: Fast Three Task
-https://codeforces.com/contest/1933/problem/B
+# D. Exam in MAC
+https://codeforces.com/contest/1935/problem/D
