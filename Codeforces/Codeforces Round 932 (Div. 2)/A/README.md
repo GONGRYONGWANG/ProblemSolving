@@ -1,2 +1,2 @@
-# A. Turtle Puzzle: Rearrange and Negate
-https://codeforces.com/contest/1933/problem/A
+# A. Entertainment in MAC
+https://codeforces.com/contest/1935/problem/A
