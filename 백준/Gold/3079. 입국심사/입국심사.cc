@@ -74,23 +74,24 @@ int comb(int n, int r) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-ull arr[100000];
+ll arr[100000];
 void solve() {
 
-    ull N, M;
+    ll N, M;
     cin >> N >> M;
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
     }
 
-    ull l = 1;
-    ull r = 1e19;
+    ll l = 1;
+    ll r = 1e18;
 
     while (l < r) {
-        ull m = (l + r) / 2;
-        ull ret = 0;
+        ll m = (l + r) / 2;
+        ll ret = 0;
         for (int i = 0; i < N; i++) {
             ret += m / arr[i];
+            if (ret >= M) break;
         }
         if (M <= ret) {
             r = m;
