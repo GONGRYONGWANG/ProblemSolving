@@ -75,38 +75,47 @@ int comb(int n, int r) {
 
 int N;
 ll mod = 1e9;
-ll DP[101][10][1024];
-ll dp(int len, int s, int bit) {
+ll DP[101][10][2][2];
+ll dp(int len, int s, bool zero, bool nine) {
     if (len == 1) {
-        if (bit == 1023) return 1;
+        if (zero && nine) return 1;
         else return 0;
     }
-    if (DP[len][s][bit] != -1) return DP[len][s][bit];
+    if (DP[len][s][zero][nine] != -1) return DP[len][s][zero][nine];
 
     ll ret = 0;
     if (s != 0) {
-        ret += dp(len - 1, s - 1, bit | (1 << (s - 1)));
+        if (s - 1 == 0) {
+            ret += dp(len - 1, s - 1, 1, nine);
+        }
+        else ret += dp(len - 1, s - 1, zero, nine);
     }
     if (s != 9) {
-        ret += dp(len - 1, s + 1, bit | (1 << (s + 1)));
+        if (s + 1 == 9) {
+            ret += dp(len - 1, s + 1, zero, 1);
+        }
+        else ret += dp(len - 1, s + 1, zero, nine);
     }
-    return DP[len][s][bit] = ret % mod;
+    return DP[len][s][zero][nine] = ret % mod;
 }
 
 void solve() {
     cin >> N;
     for (int i = 0; i <= N; i++) {
         for (int j = 0; j < 10; j++) {
-            for (int k = 0; k < 1024; k++) {
-                DP[i][j][k] = -1;
-            }
+            DP[i][j][0][0] = -1;
+            DP[i][j][0][1] = -1;
+            DP[i][j][1][0] = -1;
+            DP[i][j][1][1] = -1;
         }
     }
     ll ans = 0;
-    for (int i = 1; i <= 9; i++) {
-        ans += dp(N, i, (1<<i));
+    for (int i = 1; i <= 8; i++) {
+        ans += dp(N, i, 0, 0);
         ans %= mod;
     }
+    ans += dp(N, 9, 0, 1);
+    ans %= mod;
     cout << ans;
 }
 
