@@ -73,40 +73,29 @@ int comb(int n, int r) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-vector<int> E[1001];
-int assign[1001];
-bool done[1001];
-
-bool dfs(int x) {
-    for (int i = 0; i < E[x].size(); i++) {
-        int target = E[x][i];
-        if (done[target]) continue;
-        done[target] = true;
-        if (assign[target] == 0 || dfs(assign[target])) {
-            assign[target] = x;
-            return 1;
-        }
-    }
-    return 0;
-}
 
 void solve() {
     int N, M;
     cin >> N >> M;
-    for (int i = 1; i <= M; i++) {
-        int a, b;
-        cin >> a >> b;
-        E[i].clear();
-        for (int j = a; j <= b; j++) {
-            E[i].push_back(j);
-        }
+    vector<pii> arr(M);
+    for (int i = 0; i < M; i++) {
+        cin >> arr[i].second >> arr[i].first;
     }
 
+    sort(arr.begin(), arr.end());
+    vector<bool> visited(N + 1, false);
+
     int ans = 0;
-    fill(assign, assign + N + 1, 0);
-    for (int i = 1; i <= M; i++) {
-        fill(done, done + N + 1, false);
-        if (dfs(i)) ans += 1;
+    for (int i = 0; i < M; i++) {
+        int a = arr[i].second;
+        int b = arr[i].first;
+        for (int j = a; j <= b; j++) {
+            if (!visited[j]) {
+                visited[j] = true;
+                ans += 1;
+                break;
+            }
+        }
     }
     cout << ans << endl;
 
