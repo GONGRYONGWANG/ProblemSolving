@@ -71,12 +71,6 @@ int comb(int n, int r) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-struct treeNode {
-    treeNode() {}
-    treeNode(int sz, int val) : sz(sz), val(val) {}
-    int sz;
-    int val;
-};
 
 int tree[4000];
 int arr[1001];
