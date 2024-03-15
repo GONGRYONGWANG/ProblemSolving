@@ -71,38 +71,75 @@ int comb(int n, int r) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+struct treeNode {
+    treeNode() {}
+    treeNode(int sz, int val) : sz(sz), val(val) {}
+    int sz;
+    int val;
+};
 
+int tree[4000];
+int arr[1001];
+
+
+int makeTree(int node, int start, int end) {
+    if (start == end) {
+        return tree[node] = 1;
+    }
+    int mid = (start + end) / 2;
+    return tree[node] = makeTree(node * 2, start, mid) + makeTree(node * 2 + 1, mid + 1, end);
+}
+
+void remove(int node, int start, int end, int target) {
+    if (target<start || target>end) return;
+    tree[node] -= 1;
+    if (start != end) {
+        int mid = (start + end) / 2;
+        remove(node * 2, start, mid, target);
+        remove(node * 2 + 1, mid + 1, end, target);
+    }
+}
+
+int get(int node, int start, int end, int left, int right) {
+    if (left > end || right < start) return 0;
+    if (left <= start && right >= end) return tree[node];
+    int mid = (start + end) / 2;
+    return get(node * 2, start, mid, left, right) + get(node * 2 + 1, mid + 1, end, left, right);
+}
+
+int findKth(int node, int start, int end, int k) {
+    if (start == end) return start;
+    int mid = (start + end) / 2;
+    if (tree[node * 2] < k) return findKth(node * 2 + 1, mid + 1, end, k - tree[node * 2]);
+    else return findKth(node * 2, start, mid, k);
+}
 
 
 void solve() {
     int N;
     cin >> N;
-    deque<pii> q;
     for (int i = 1; i <= N; i++) {
-        int x;
-        cin >> x;
-        q.push_back({ i,x });
+        cin >> arr[i];
     }
-    while (!q.empty()) {
-        cout << q.front().first << " ";
-        int x = q.front().second;
-        q.pop_front();
-        if (q.empty()) break;
-        if (x > 0) {
-            x -= 1;
-            while (x--) {
-                q.push_back(q.front());
-                q.pop_front();
-            }
-        }
-        else {
-            x = -x;
-            while (x--) {
-                q.push_front(q.back());
-                q.pop_back();
-            }
-        }
+
+    makeTree(1, 1, N);
+
+    int idx = 1;
+    for (int i = 0; i < N - 1;i++) {
+        cout << idx << " ";
+        remove(1, 1, N, idx);
+        int move = arr[idx];
+        int a = get(1, 1, N, 1, idx);
+        int b = get(1, 1, N, idx, N);
+        if (move < 0) move += 1;
+        move += a;
+        move %= (a + b);
+        move += (a + b);
+        move %= (a + b);
+        if (move == 0) move = a + b;
+        idx = findKth(1, 1, N, move);
     }
+    cout << idx;
 }
 
 int main() {
