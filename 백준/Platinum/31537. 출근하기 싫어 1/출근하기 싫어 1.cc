@@ -64,46 +64,33 @@ ll fastpow(ll x, ll n, ll mod = INF) {
 }
 
 
-
-
-/*
-int COMB[100][100];
-int comb(int n, int r) {
-    if (r == 0) return 1;
-    if (n == r) return 1;
-    if (COMB[n][r]) return COMB[n][r];
-    return COMB[n][r] = comb(n - 1, r) + comb(n - 1, r - 1);
-}
-*/
-
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-int arr[1000000];
+ll arr[1000001];
 ll mod = 1e9 + 7;
 
 ll F[1000001];
 
 ll fac(ll x) {
-    if (F[x]) return F[x];
-    return F[x] = fac(x - 1) * x % mod;
+
+
+
+    return F[x];
 }
+
 
 ll modinv(ll x) {
     return fastpow(x, mod - 2, mod);
 }
 
-ll comb(ll n, ll r) {
-    return fac(n) * modinv(fac(n - r)) % mod * modinv(fac(r)) % mod;
-}
-
 void solve() {
 
-    int N, M;
+    ll N, M;
     cin >> N >> M;
-    int total = 0;
+    ll total = 0;
     for (int i = 0; i < N; i++) {
-        int x;
+        ll x;
         cin >> x;
         arr[i] = M - x;
         total += arr[i];
@@ -113,20 +100,19 @@ void solve() {
         return;
     }
 
-    F[0] = F[1] = 1;
+    arr[N] = M - total;
 
-    ll ans = 1;
-    ll n = M;
-    for (int i = 0; i < N; i++) {
-        ans *= comb(n, arr[i]);
-        ans %= mod;
-        n -= arr[i];
+    F[0] = F[1] = 1;
+    for (ll i = 2; i <= M; i++) {
+        F[i] = F[i - 1] * i % mod;
+    }
+
+    ll ans = fac(M);
+    for (int i = 0; i <= N; i++) {
+        ans = ans * modinv(fac(arr[i])) % mod;
     }
 
     cout << ans;
-
-
-
 
 }
 
