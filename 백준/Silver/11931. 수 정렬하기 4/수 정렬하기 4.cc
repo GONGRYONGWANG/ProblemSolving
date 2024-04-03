@@ -82,36 +82,16 @@ ll combination(ll n, ll r, ll mod) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-queue<ll> bucket[1000];
-
 void solve() {
-    ll N;
+    int N;
     cin >> N;
-    ll mx = 0;
-    vector<ll> v(N);
+    vector<int> arr(N);
     for (int i = 0; i < N; i++) {
-        cin >> v[i];
-        v[i] += 1000000;
-        mx = max(mx, v[i]);
+        cin >> arr[i];
     }
-    ll mod = 1;
-    while (mx) {
-        mx /= 1000;
-        mod *= 1000;
-        for (int i = 0; i < N; i++) {
-            bucket[v[i] % mod / (mod / 1000)].push(v[i]);
-        }
-        v.clear();
-        for (int i = 999; i >= 0; i--) {
-            while (!bucket[i].empty()) {
-                v.push_back(bucket[i].front());
-                bucket[i].pop();
-            }
-        }
-    }
-
+    sort(arr.rbegin(), arr.rend());
     for (int i = 0; i < N; i++) {
-        cout << v[i] - 1000000<< endl;
+        cout << arr[i] << endl;
     }
 
 }
