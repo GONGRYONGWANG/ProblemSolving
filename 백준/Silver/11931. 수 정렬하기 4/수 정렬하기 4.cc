@@ -82,16 +82,20 @@ ll combination(ll n, ll r, ll mod) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
+int cnt[2000001];
+
 void solve() {
     int N;
     cin >> N;
-    vector<int> arr(N);
     for (int i = 0; i < N; i++) {
-        cin >> arr[i];
+        int x;
+        cin >> x;
+        cnt[x + 1000000] += 1;
     }
-    sort(arr.rbegin(), arr.rend());
-    for (int i = 0; i < N; i++) {
-        cout << arr[i] << endl;
+    for (int i = 2000000; i >= 0; i--) {
+        for (int j = 0; j < cnt[i]; j++) {
+            cout << i - 1000000 << endl;
+        }
     }
 
 }
