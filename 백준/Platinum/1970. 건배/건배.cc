@@ -85,12 +85,13 @@ ll combination(ll n, ll r, ll mod) {
 
 int arr[1000];
 int DP[1001][1001];
+vector<int> coke[101];
 int dp(int x, int y) {
     if (x >= y) return 0;
     if (DP[x][y] != -1) return DP[x][y];
     if (arr[x] == arr[y]) return DP[x][y] = 1 + dp(x + 1, y - 1);
-    for (int i = x; i < y; i++) {
-        DP[x][y] = max(DP[x][y], dp(x, i) + dp(i + 1, y));
+    for (auto iter = lower_bound(coke[arr[x]].begin(), coke[arr[x]].end(), x); (iter != coke[arr[x]].end()) && ((*iter)<y) ; iter++) {
+        DP[x][y] = max(DP[x][y], dp(x, (*iter)) + dp((*iter) + 1, y));
     }
     return DP[x][y];
 
@@ -100,6 +101,7 @@ void solve() {
     cin >> N;
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
+        coke[arr[i]].push_back(i);
     }
     for (int i = 0; i < N; i++) {
         for (int j = i + 1; j < N; j++) {
