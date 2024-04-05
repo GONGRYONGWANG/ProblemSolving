@@ -84,7 +84,7 @@ ll combination(ll n, ll r, ll mod) {
 
 
 int arr[1000];
-int DP[1001][1001];
+int DP[1000][1000];
 vector<int> coke[101];
 int dp(int x, int y) {
     if (x >= y) return 0;
