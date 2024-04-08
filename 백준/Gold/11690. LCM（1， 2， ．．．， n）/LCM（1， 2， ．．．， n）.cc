@@ -90,7 +90,7 @@ void solve() {
     cin >> N;
     ll ans = 1;
     ll mod = ((ll)1 << 32);
-    for (ll i = 2; i <= N; i++) {
+    for (ll i = 2; i <= (ll)sqrt(N); i++) {
         if (notprime[i]) continue;
         ll x = N;
         while (x >= i) {
@@ -101,6 +101,11 @@ void solve() {
         for (ll j = i * i; j <= N; j += i) {
             notprime[j] = true;
         }
+    }
+    for (ll i = (ll)sqrt(N) + 1; i <= N; i++) {
+        if (notprime[i]) continue;
+        ans *= i;
+        ans %= mod;
     }
     cout << ans;
 
