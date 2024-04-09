@@ -83,37 +83,49 @@ ll combination(ll n, ll r, ll mod) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-
-int arr[300001];
-int DP[300001];
+int arr[300000];
+int DP[300000];
 
 void solve() {
     int N, M, Q;
     cin >> N >> M >> Q;
-    for (int i = 1; i <= N; i++) {
+    for (int i = 0; i < N; i++) {
         cin >> arr[i];
     }
-    for (int i = 0; i < M; i++) {
-        DP[i] = inf + 1;
+
+    for (int i = M - 1; i < min(2 * M - 1, N); i++) {
+        DP[i] = arr[i] - arr[0];
     }
-    for (int i = M; i <= N; i++) {
-        DP[i] = arr[i] - arr[1];
-    }
-    for (int i = 2 * M; i <= N; i++) {
-        for (int j = 0; j <= i - M; j++) {
-            DP[i] = min(DP[i], max(DP[j], arr[i] - arr[j + 1]));
+
+
+    vector<int> v;
+    for (int i = 2 * M - 1; i < N; i++) {
+        while (!v.empty() && DP[v.back()] >= DP[i - M]) {
+            v.pop_back();
+        }
+        v.push_back(i - M);
+
+        int l = 0;
+        int r = v.size() - 1;
+        while (l < r) {
+            int m = (l + r) / 2;
+            if (DP[v[m]] >= arr[i] - arr[v[m] + 1]) {
+                r = m;
+            }
+            else l = m + 1;
+        }
+        DP[i] = max(DP[v[l]], arr[i] - arr[v[l] + 1]);
+        if (l != 0) {
+            DP[i] = min(DP[i], max(DP[v[l-1]],arr[i] - arr[v[l - 1] + 1]));
         }
     }
 
-
-    while(Q--) {
+    while (Q--) {
         int x;
         cin >> x;
-        if (DP[N] <= x) cout << 1;
+        if (x >= DP[N - 1]) cout << 1;
         else cout << 0;
     }
-
-
 
 }
 
