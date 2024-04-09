@@ -30,8 +30,8 @@ typedef complex<double> cpx;
 #define pq priority_queue
 #define endl "\n"
 
-int dx[4] = { 1,-1,0,0 };
-int dy[4] = { 0,0,1,-1 };
+//int dx[4] = { 1,-1,0,0 };
+//int dy[4] = { 0,0,1,-1 };
 //int dx[8] = { 1,1,1,-1,-1,-1,0,0 };
 //int dy[8] = { 1,0,-1,1,0,-1,1,-1 };
 
@@ -93,38 +93,18 @@ void solve() {
     for (int i = 1; i <= N; i++) {
         cin >> arr[i];
     }
-    for (int i = 1; i < M; i++) {
+    for (int i = 0; i < M; i++) {
         DP[i] = inf + 1;
     }
-    for (int i = M; i <= min(2 * M - 1, N); i++) {
+    for (int i = M; i <= N; i++) {
         DP[i] = arr[i] - arr[1];
     }
     for (int i = 2 * M; i <= N; i++) {
-        int l = i - 2 * M + 1;
-        int r = l / M * M + M - 1;
-
-        while (l < r) {
-            int m = (l + r) / 2;
-            if (arr[i] - arr[m + 1] < DP[m]) {
-                r = m;
-            }
-            else l = m + 1;
+        for (int j = 0; j <= i - M; j++) {
+            DP[i] = min(DP[i], max(DP[j], arr[i] - arr[j + 1]));
         }
-        DP[i] = min(max(DP[l], arr[i] - arr[l + 1]), max(DP[l - 1], arr[i] - arr[l]));
-
-
-        r = i - M;
-        l = r / M * M;
-
-        while (l < r) {
-            int m = (l + r) / 2;
-            if (arr[i] - arr[m + 1] < DP[m]) {
-                r = m;
-            }
-            else l = m + 1;
-        }
-        DP[i] = min(DP[i], min(max(DP[l], arr[i] - arr[l + 1]), max(DP[l - 1], arr[i] - arr[l])));
     }
+
 
     while(Q--) {
         int x;
@@ -132,7 +112,6 @@ void solve() {
         if (DP[N] <= x) cout << 1;
         else cout << 0;
     }
-
 
 
 
