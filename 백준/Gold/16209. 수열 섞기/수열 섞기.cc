@@ -88,26 +88,54 @@ void solve() {
 
     int N;
     cin >> N;
-    vector<int> arr(N);
+    vector<int> pos, neg;
+    int zeros = 0;
     for (int i = 0; i < N; i++) {
-        cin >> arr[i];
-    }
-    sort(arr.rbegin(), arr.rend());
-
-    deque<int> q;
-    bool x = true;
-    for (int i = 0; i < N; i++) {
-        if (x) q.push_back(arr[i]);
-        else q.push_front(arr[i]);
-        x = !x;
+        int x;
+        cin >> x;
+        if (x > 0) pos.push_back(x);
+        else if (x < 0) neg.push_back(x);
+        else zeros += 1;
     }
 
-    for (int i = 0; i < N; i++) {
-        cout << q[i] << " ";
+    sort(pos.rbegin(), pos.rend());
+    sort(neg.begin(), neg.end());
+
+    bool b = true;
+
+    deque<int> posq;
+    for (int i = 0; i < pos.size(); i++) {
+        if (b)posq.push_back(pos[i]);
+        else posq.push_front(pos[i]);
+        b = !b;
     }
 
+    b = true;
+    deque<int> negq;
+    for (int i = 0; i < neg.size(); i++) {
+        if (b)negq.push_back(neg[i]);
+        else negq.push_front(neg[i]);
+        b = !b;
+    }
 
+    if (pos.size() % 2 == 0) {
+        reverse(posq.begin(), posq.end());
+    }
 
+    for (int i = 0; i < pos.size(); i++) {
+        cout << posq[i] << " ";
+    }
+    for (int i = 0; i < zeros; i++) {
+        cout << 0 << " ";
+    }
+
+    if (neg.size() % 2) {
+        reverse(negq.begin(), negq.end());
+    }
+
+    for (int i = 0; i < neg.size(); i++) {
+        cout << negq[i] << " ";
+    }
 
 }
 
