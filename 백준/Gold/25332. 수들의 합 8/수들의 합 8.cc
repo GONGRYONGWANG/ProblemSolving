@@ -101,7 +101,7 @@ void solve() {
 
     ll ans = 0;
 
-    map<ll, ll> m;
+    unordered_map<ll, ll> m;
     m[0] = 1;
 
     for (int i = 1; i <= N; i++) {
