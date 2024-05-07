@@ -82,58 +82,45 @@ ll combination(ll n, ll r, ll mod) {
 
 
 
-
 void solve() {
     int N;
     cin >> N;
-
-    vector<pii> L, R;
     string dir;
     cin >> dir;
+    vector<int> h(N);
     for (int i = 0; i < N; i++) {
-        int h;
-        cin >> h;
-        if (dir[i] == 'L') L.push_back({ i, h });
-        else R.push_back({ i,h });
+        cin >> h[i];
     }
 
-    map<int, int> l, r;
+    vector<int> ret(N, 0);
 
     vector<int> arr;
-    for (int i = 0; i < L.size(); i++) {
-        int idx = L[i].first;
-        int val = L[i].second;
-        auto it = lower_bound(arr.begin(), arr.end(), val);
-        if (it == arr.end()) arr.push_back(val);
-        else *it = val;
-        l[idx] = arr.size();
+    for (int i = 0; i < N; i++) {
+        if (dir[i] == 'L') {
+            auto it = lower_bound(arr.begin(), arr.end(), h[i]);
+            if (it == arr.end()) arr.push_back(h[i]);
+            else *it = h[i];
+        }
+        ret[i] += arr.size();
     }
 
     arr.clear();
-    for (int i = R.size() - 1; i >= 0; i--) {
-        int idx = R[i].first;
-        int val = R[i].second;
-        auto it = lower_bound(arr.begin(), arr.end(), val);
-        if (it == arr.end()) arr.push_back(val);
-        else *it = val;
-        r[idx] = arr.size();
+    for (int i = N - 1; i >= 0; i--) {
+        if (dir[i] == 'R') {
+            auto it = lower_bound(arr.begin(), arr.end(), h[i]);
+            if (it == arr.end()) arr.push_back(h[i]);
+            else *it = h[i];
+        }
+        ret[i] += arr.size();
     }
-    
 
     int ans = 0;
-    if (!r.empty()) {
-        ans = r.lower_bound(0)->second;
-    }
-    for (int i = 0; i < L.size(); i++) {
-        int ret = 0;
-        int idx = L[i].first;
-        ret += l[idx];
-        auto it = r.upper_bound(idx);
-        if (it != r.end()) ret += (it->second);
-        ans = max(ans, ret);
+    for (int i = 0; i < N; i++) {
+        ans = max(ans, ret[i]);
     }
 
     cout << N - ans;
+
 
 
 }
