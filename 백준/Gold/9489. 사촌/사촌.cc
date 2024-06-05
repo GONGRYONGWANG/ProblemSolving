@@ -102,7 +102,7 @@ void solve() {
     unordered_map<int, int> parent;
     unordered_map<int, vector<int>> child;
     
-    pq<int, vector<int>, greater<int>> q;
+    queue<int> q;
 
     int prv;
     cin >> prv;
@@ -117,8 +117,8 @@ void solve() {
             parent[cur] = parent[prv];
         }
         else {
-            child[q.top()].push_back(cur);
-            parent[cur] = q.top();
+            child[q.front()].push_back(cur);
+            parent[cur] = q.front();
             q.pop();
         }
         q.push(cur);
