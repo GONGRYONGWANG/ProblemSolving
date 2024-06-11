@@ -96,17 +96,10 @@ int dy[8] = { -1,0,1,-1,1,-1,0,1 };
 
 
 
-vector<int> child[250001];
-vector<int> E[250001];
-
 int board[501][501];
-
-struct cmp {
-    bool operator()(pii a, pii b) {
-        if (a.second == b.second) return a.first > b.first;
-        return a.second > b.second;
-    }
-};
+int depth[250001];
+vector<int> E[250001];
+vector<int> child[250001];
 
 int ANS[250001];
 int ans(int x) {
@@ -115,13 +108,14 @@ int ans(int x) {
     for (int nx : child[x]) {
         ret += ans(nx);
     }
-    return ret;
+    return ANS[x] = ret;
 }
 
-
 void solve() {
+
     int N, M, K;
     cin >> N >> M >> K;
+
     for (int i = 1; i <= K; i++) {
         int x, y;
         cin >> x >> y;
@@ -129,39 +123,40 @@ void solve() {
         for (int dir = 0; dir < 8; dir++) {
             int nx = x + dx[dir];
             int ny = y + dy[dir];
-            if (nx <= 0 || nx > N || ny <= 0 || ny > M || !board[nx][ny]) continue;
+            if (nx <= 0 || ny <= 0 || nx > N || ny > M || !board[nx][ny]) continue;
             E[i].push_back(board[nx][ny]);
             E[board[nx][ny]].push_back(i);
         }
     }
 
-
     int s;
     cin >> s;
 
-    vector<bool> visited(K + 1, false);
-    pq<pii, vector<pii>, cmp> q;
-    q.push({ s,0 });
-    visited[s] = true;
-
+    queue<int> q;
+    q.push(s);
+    depth[s] = 1;
     while (!q.empty()) {
-        int cur = q.top().first;
-        int t = q.top().second;
+        int cur = q.front();
         q.pop();
         for (int nx : E[cur]) {
-            if (visited[nx]) continue;
-            visited[nx] = true;
-            child[cur].push_back(nx);
-            q.push({ nx, t + 1 });
+            if (depth[nx]) continue;
+            depth[nx] = depth[cur] + 1;
+            q.push(nx);
         }
     }
 
 
     for (int i = 1; i <= K; i++) {
-        if (!visited[i]) {
+        if (i == s) continue;
+        if (!depth[i]) {
             cout << -1;
             return;
         }
+        int parent = inf;
+        for (int nx : E[i]) {
+            if (depth[nx] < depth[i]) parent = min(parent, nx);
+        }
+        child[parent].push_back(i);
     }
 
 
