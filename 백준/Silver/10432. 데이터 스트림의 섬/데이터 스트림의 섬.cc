@@ -94,7 +94,6 @@ int ccw(pll a, pll b, pll c) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-int arr[12];
 void solve() {
     int tc;
     cin >> tc;
@@ -112,9 +111,6 @@ void solve() {
         st.push(x);
     }
     cout << tc << " " << ans << endl;
-
-
-
 
 
 }
