@@ -96,7 +96,7 @@ int ccw(pll a, pll b, pll c) {
 
 
 int ret[1000001];
-unordered_set<int> st;
+bool inarr[1000001];
 
 void solve() {
     int N;
@@ -105,12 +105,12 @@ void solve() {
 
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
-        st.insert(arr[i]);
+        inarr[arr[i]] = true;
     }
 
     for (int x : arr) {
         for (int i = x * 2; i <= 1000000; i += x) {
-            if (st.count(i)) {
+            if (inarr[i]) {
                 ret[i] -= 1;
                 ret[x] += 1;
             }
