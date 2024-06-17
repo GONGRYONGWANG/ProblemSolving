@@ -118,9 +118,13 @@ void solve() {
         DP[i] = 0;
     }
 
-
+    ll tmp = C[1];
+    if (N != 2) {
+        tmp += C[N - 1];
+    }
+    C[N - 1] = 0;
     N -= 1;
-    ans = max(ans, 1 + C[1] + dp(2));
+    ans = max(ans, 1 + tmp + dp(2));
 
     cout << ans;
 
