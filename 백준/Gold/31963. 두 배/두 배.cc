@@ -98,25 +98,44 @@ int ccw(pll a, pll b, pll c) {
 
 
 void solve() {
+
     int N;
     cin >> N;
 
-    int ans = 0;
+    ll ans = 0;
 
-    int prv = 0;
+    pll prv = { 0,1 };
     for (int i = 0; i < N; i++) {
-        int cur;
-        cin >> cur;
-        while (cur < prv) {
-            cur *= 2;
-            ans += 1;
+        pll cur;
+        cin >> cur.second;
+        while (cur.second % 2 == 0) {
+            cur.first += 1;
+            cur.second /= 2;
         }
+
+        if (cur.first + (ll)log2(cur.second) < prv.first + (ll)log2(prv.second)) {
+            ans += prv.first + (ll)log2(prv.second) - cur.first - (ll)log2(cur.second);
+            cur.first += prv.first + (ll)log2(prv.second) - cur.first - (ll)log2(cur.second);
+        }
+        if (cur.first + (ll)log2(cur.second) == prv.first + (ll)log2(prv.second)) {
+            ll a = cur.second;
+            ll b = prv.second;
+            if (cur.first > prv.first) {
+                a *= ((ll)1 << (cur.first - prv.first));
+            }
+            else b*= ((ll)1 << (prv.first - cur.first));
+
+            if (a < b) {
+                ans += 1;
+                cur.first += 1;
+            }
+        }
+
         prv = cur;
+
     }
 
     cout << ans;
-
-
 
 
 }
