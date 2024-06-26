@@ -97,35 +97,38 @@ int ccw(pll a, pll b, pll c) {
 /////////////////////////////////////////////////////////////////////////////////////
 
 
+int arr[500001];
+
 void solve() {
     int N, H;
     cin >> N >> H;
-
-    vector<int> arr1;
-    vector<int> arr2;
-
     for (int i = 0; i < N; i++) {
         int x;
         cin >> x;
-        if (i % 2) arr1.push_back(x);
-        else arr2.push_back(x);
+        if (i % 2) {
+            arr[1] += 1;
+            arr[x + 1] -= 1;
+        }
+        else {
+            arr[H + 1 - x] += 1;
+        }
     }
-
-    sort(arr1.begin(), arr1.end());
-    sort(arr2.begin(), arr2.end());
 
     int mn = inf;
     int ans = 0;
 
 
+    int ret = 0;
+
     for (int i = 1; i <= H; i++) {
-        int ret = (arr1.end() - lower_bound(arr1.begin(), arr1.end(), i)) + (arr2.end() - lower_bound(arr2.begin(), arr2.end(), H - i + 1));
+        ret += arr[i];
         if (ret < mn) {
             mn = ret;
             ans = 0;
         }
-        if (ret == mn) ans += 1;
-
+        if (ret == mn) {
+            ans += 1;
+        }
     }
 
     cout << mn << " " << ans;
