@@ -96,19 +96,12 @@ int ccw(pll a, pll b, pll c) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-int N;
-pii arr[3000];
-ll val[3000];
 
 struct treeNode {
     treeNode() {}
     treeNode(ll sum, ll mx, ll lmx, ll rmx) : sum(sum), mx(mx), lmx(lmx), rmx(rmx) {}
     ll sum, mx, lmx, rmx;
 };
-
-
-ll init[3001];
-treeNode tree[12000];
 
 treeNode mer(treeNode t1, treeNode t2) {
     treeNode ret;
@@ -121,64 +114,79 @@ treeNode mer(treeNode t1, treeNode t2) {
     return ret;
 }
 
-treeNode makeTree(int node, int start, int end) {
+treeNode tree[12000];
+
+void update(int node, int start, int end, int target, ll val) {
+    if (target > end || target < start) return;
     if (start == end) {
-        return tree[node] = { init[start], init[start], init[start], init[start] };
+        ll nxt = tree[node].sum + val;
+        tree[node] = { nxt,nxt,nxt,nxt };
+        return;
     }
     int mid = (start + end) / 2;
-    return tree[node] = mer(makeTree(node * 2, start, mid), makeTree(node * 2 + 1, mid + 1, end));
-}
-
-treeNode get(int node, int start, int end, int left, int right) {
-    if (left > end || right < start) return { 0,-INF,-INF,-INF };
-    if (left <= start && right >= end) return tree[node];
-    int mid = (start + end) / 2;
-    return mer(get(node * 2, start, mid, left, right), get(node * 2 + 1, mid + 1, end, left, right));
+    update(node * 2, start, mid, target, val);
+    update(node * 2 + 1, mid + 1, end, target, val);
+    tree[node] = mer(tree[node * 2], tree[node * 2 + 1]);
 }
 
 void solve() {
+    int N;
     cin >> N;
-
-    set<int> st;
-
+    vector<vector<ll>> arr(N);
+    set<int> xs;
+    set<int> ys;
+    unordered_map<int, int> compx, compy;
     for (int i = 0; i < N; i++) {
-        cin >> arr[i].first >> arr[i].second >> val[i];
-        st.insert(arr[i].first);
+        ll x, y, w;
+        cin >> x >> y >> w;
+        arr[i] = { x,y,w };
+        xs.insert(x);
+        ys.insert(y);
     }
 
-    unordered_map<int, int> comp;
-    int cnt = 0;
-    for (auto iter = st.begin(); iter != st.end(); iter++) {
-        cnt += 1;
-        comp[*iter] = cnt;
+    int xcnt = 0;
+    for (auto iter = xs.begin(); iter != xs.end(); iter++) {
+        xcnt += 1;
+        compx[*iter] = xcnt;
     }
 
-    ll ans = -INF;
+    int ycnt = 0;
+    for (auto iter = ys.begin(); iter != ys.end(); iter++) {
+        ycnt += 1;
+        compy[*iter] = ycnt;
+    }
 
     for (int i = 0; i < N; i++) {
-        for (int j = i; j < N; j++) {
-            int y1 = arr[i].second;
-            int y2 = arr[j].second;
-            if (y1 > y2) swap(y1, y2);
+        arr[i][0] = compx[arr[i][0]];
+        arr[i][1] = compy[arr[i][1]];
+    }
 
-            for (int k = 1; k <= cnt; k++) {
-                init[k] = 0;
+    sort(arr.begin(), arr.end());
+
+    ll ans = 0;
+
+    for (int i = 1; i <= xcnt; i++) {
+
+        for (int j = 0; j < 4 * ycnt; j++) {
+            tree[j] = { 0,0,0,0 };
+        }
+
+        int idx = 0;
+        while (arr[idx][0] != i) {
+            idx += 1;
+        }
+
+        for (int j = i; j <= xcnt; j++) {
+            while (idx != N && arr[idx][0] == j) {
+                update(1, 1, ycnt, arr[idx][1], arr[idx][2]);
+                idx += 1;
             }
+            ans = max(ans, tree[1].mx);
 
-            for (int k = 0; k < N; k++) {
-                if (arr[k].second >= y1 && arr[k].second <= y2) {
-                    init[comp[arr[k].first]] += val[k];
-                }
-            }
-
-            makeTree(1, 1, cnt);
-
-            ans = max(ans, get(1, 1, cnt, 1, cnt).mx);
         }
     }
 
     cout << ans;
-
 
 
 }
