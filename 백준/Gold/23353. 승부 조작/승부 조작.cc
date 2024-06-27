@@ -126,6 +126,8 @@ void solve() {
         }
     }
 
+    int ans = 0;
+
     for (int i = N - 1; i >= 0; i--) {
         for (int j = N - 1; j >= 0; j--) {
             if (board[i][j] == 0) continue;
@@ -140,15 +142,9 @@ void solve() {
                 if (nx < 0 || nx >= N || ny < 0 || ny >= N || board[nx][ny] != 1) continue;
                 sz[i][j][dir] += sz[nx][ny][dir];
             }
-        }
-    }
 
-    int ans = 0;
 
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < N; j++) {
-            if (board[i][j] == 0) continue;
-            else if (board[i][j] == 1) {
+            if (board[i][j] == 1) {
                 for (int dir = 0; dir < 4; dir++) {
                     ans = max(ans, sz[i][j][dir] + sz[i][j][7 - dir] - 1);
                 }
@@ -158,6 +154,9 @@ void solve() {
                     ans = max(ans, sz[i][j][dir] + sz[i][j][7 - dir] + 1);
                 }
             }
+
+
+
         }
     }
 
