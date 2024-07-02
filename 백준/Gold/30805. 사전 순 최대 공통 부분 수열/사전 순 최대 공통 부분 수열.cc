@@ -104,52 +104,57 @@ int ccw(pll a, pll b, pll c) {
 
 
 
-int cntA[101][101];
-int cntB[101][101];
+struct cmp {
+    bool operator()(pii a, pii b) {
+        if (a.first == b.first) return a.second > b.second;
+        return a.first < b.first;
+    }
+};
 
 void solve() {
     int N, M;
+    pq<pii, vector<pii>, cmp> A, B;
+
     cin >> N;
-    vector<int> A(N+1);
-    for (int i = 1; i <= N; i++) {
-        cin >> A[i];
-        for (int j = 0; j <= 100; j++) {
-            cntA[i][j] = cntA[i - 1][j];
-        }
-        cntA[i][A[i]] += 1;
+    for (int i = 0; i < N; i++) {
+        int x;
+        cin >> x;
+        A.push({x,i});
     }
 
     cin >> M;
-    vector<int> B(M + 1);
-    for (int i = 1; i <= M; i++) {
-        cin >> B[i];
-        for (int j = 0; j <= 100; j++) {
-            cntB[i][j] = cntB[i - 1][j];
-        }
-        cntB[i][B[i]] += 1;
+    for (int i = 0; i < M; i++) {
+        int x;
+        cin >> x;
+        B.push({ x,i });
     }
-
 
     vector<int> ans;
-    int aidx = 1; int bidx = 1;
-    while (aidx <= N && bidx <= M) {
-        bool b = false;
-        for (int j = 100; j >= 1; j--) {
-            if (cntA[N][j] - cntA[aidx - 1][j] != 0 && cntB[M][j] - cntB[bidx - 1][j] != 0) {
-                ans.push_back(j);
-                while (A[aidx] != j) aidx += 1;
-                while (B[bidx] != j) bidx += 1;
-                aidx += 1; bidx += 1;
-                b = true;
-                break;
-            }
+
+    int aidx = 0;
+    int bidx = 0;
+    while (!A.empty() && !B.empty()) {
+        while (!A.empty() && !B.empty() && (A.top().second < aidx || B.top().second < bidx || A.top().first != B.top().first)) {
+            if (A.top().second < aidx) A.pop();
+            else if (B.top().second < bidx) B.pop();
+            else if (A.top().first > B.top().first) A.pop();
+            else B.pop();
         }
-        if (!b) break;
+        if (A.empty() || B.empty()) break;
+        ans.push_back(A.top().first);
+        aidx = A.top().second;
+        bidx = B.top().second;
+        A.pop();
+        B.pop();
     }
+
     cout << ans.size() << endl;
     for (int x : ans) {
         cout << x << " ";
     }
+
+
+
 
 
 }
