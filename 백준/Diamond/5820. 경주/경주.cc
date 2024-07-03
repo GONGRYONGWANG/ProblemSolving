@@ -118,9 +118,9 @@ bool intersect(pll A, pll B, pll C, pll D) { // 선분 교차 판정 A-B , C-D
 /////////////////////////////////////////////////////////////////////////////////////
 
 
-vector<pii> E[20000];
-int sz[20000];
-bool visited[20000];
+vector<pii> E[200000];
+int sz[200000];
+bool visited[200000];
 
 void getsz(int cur, int p) {
     sz[cur] = 1;
