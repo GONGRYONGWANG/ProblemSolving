@@ -1,33 +1,29 @@
-#include<iostream>
-#include<iomanip>
-#include<cstdio>
-#include<string>
-#include<vector>
-#include<utility>
-#include<list>
-#include<queue>
-#include<stack>
-#include<deque>
-#include<set>
-#include<unordered_set>
-#include<map>
-#include<unordered_map>
-#include<cmath>
-#include<algorithm>
-#include<bitset>
-#include<cstdlib>
-#include<ctime> // srand(time(0))
-#include<regex> // 정규표현식
-#include<random> // rand
-#include<complex> // complex number
-#include<numeric>
+#include<bits/stdc++.h>
+#include<ext/rope>
+/*
+string s;
+s.c_str() -> 스트링을 char arr로
+rope<char> rp(s.c_str());
+rp.insert(idx, s.c_str());
+rp.insert(idx, some_char);'
+cout<<rp.substr(idx, length);
+*/
+
 using namespace std;
+using namespace __gnu_cxx;
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_set;
+typedef tree<int,null_type,less_equal<int>,rb_tree_tag,tree_order_statistics_node_update> ordered_multiset;
+
+
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
-typedef complex<double> cpx;
+
 #define pq priority_queue
 #define endl "\n"
 
@@ -36,22 +32,6 @@ const int inf = 1e9;
 const double pi = 3.14159265358979323846;
 
 const string debug = "output: ";
-
-struct VectorHasher {
-    size_t operator()(const vector<int>& V) const {
-        size_t hash = V.size();
-        for (auto& i : V) {
-            hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        }
-        return hash;
-    }
-};
-
-struct PiiHasher {
-    size_t operator()(const pii& x) const {
-        return hash<long long>()(((long long)x.first) ^ (((long long)x.second) << 32));
-    }
-};
 
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
@@ -75,63 +55,33 @@ ll powmod(ll x, ll n, ll mod) {
     return half * half % mod;
 }
 
-
-
 ll modinv(ll x, ll mod) {
     return powmod(x, mod - 2, mod);
 }
 
-
-//const ll Fsize = 1;
-//ll F[Fsize];
 ll factorial(ll x) {
     ll ret = 1;
-    //ret = F[x]; //
-    return ret;
-}
-
-//ll modI[Fsize];  ll modIF[Fsize];
-ll modinvfactorial(ll x) {
-    ll ret = 1;
-    //ret = modIF[x]; //
+    // ret = F[x];
     return ret;
 }
 
 ll combination(ll n, ll r, ll mod) {
-    if (r == 0 || n == r) return 1;
-    return factorial(n) * modinvfactorial(n - r) % mod * modinvfactorial(r) % mod;
+    return factorial(n) * modinv(factorial(n - r), mod) % mod * modinv(factorial(r), mod) % mod;
 }
 
-ll ccw(pll a, pll b, pll c) {
-    return (b.first - a.first) * (c.second - a.second) - (c.first - a.first) * (b.second - a.second);
-}
-
-bool intersect(pll A, pll B, pll C, pll D) { // 선분 교차 판정 A-B , C-D
-    if (A > B) swap(A, B);
-    if (C > D) swap(C, D);
-
-    ll l1 = ccw(A, B, C) * ccw(A, B, D);
-    ll l2 = ccw(C, D, A) * ccw(C, D, B);
-
-    if (l1 == 0 && l2 == 0) {
-        return A <= D && C <= B;
-    }
-    return l1 <= 0 && l2 <= 0;
-}
-
-
-
-//int dx[4] = { 0,1,0,-1};
-//int dy[4] = { 1,0,-1,0 };
+//int dx[4] = { 1,-1,0,0 };
+//int dy[4] = { 0,0,1,-1 };
 //int dx[8] = { -1,-1,-1,0,0,1,1,1 };
 //int dy[8] = { -1,0,1,-1,1,-1,0,1 };
 
-/////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////
 
 
 bool board[8][8];
 
-void solve() {
+void solve(){
+
     int N;
     cin >> N;
     for (int i = 0; i < N; i++) {
@@ -139,21 +89,21 @@ void solve() {
             cin >> board[i][j];
         }
     }
-
+    
     int ans = inf;
+
     for (int r = 0; r < (1 << N); r++) {
         for (int c = 0; c < (1 << N); c++) {
             int ret = 0;
-            int ret2 = 0;
+
             for (int i = 0; i < N; i++) {
-                ret += ((r & (1 << i)) != 0);
-                ret += ((c & (1 << i)) != 0);
                 for (int j = 0; j < N; j++) {
-                    ret2 += board[i][j] ^ ((r & (1 << i)) != 0) ^ ((c & (1 << j)) != 0);
+                    ret += board[i][j] ^ ((r & (1 << i)) != 0) ^ ((c & (1 << j)) != 0);
                 }
             }
-            ans = min(ans, ret + ret2);
-            ans = min(ans, ret + N * N - ret2);
+
+            ans = min(ans, ret +__builtin_popcount(r)+__builtin_popcount(c));
+            ans = min(ans, N * N - ret + __builtin_popcount(r)+__builtin_popcount(c));
         }
     }
 
@@ -161,7 +111,9 @@ void solve() {
 
 }
 
-int main() {
+
+int main()
+{
     ios_base::sync_with_stdio(false); cin.tie(NULL);
     int T = 1;
     //cin >> T;
