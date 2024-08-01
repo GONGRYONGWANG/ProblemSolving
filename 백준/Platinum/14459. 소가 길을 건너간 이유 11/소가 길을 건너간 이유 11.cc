@@ -149,7 +149,7 @@ void solve() {
         cin >> x;
         vector<int> v;
         for (int nx = x - 4; nx <= x + 4; nx++) {
-            if (nx <= 1 || nx > N) continue;
+            if (nx < 1 || nx > N) continue;
             v.push_back(arr[nx]);
         }
         sort(v.rbegin(), v.rend());
