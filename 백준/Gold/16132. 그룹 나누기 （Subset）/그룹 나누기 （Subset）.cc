@@ -134,8 +134,8 @@ bool intersect(pll A, pll B, pll C, pll D) { // 선분 교차 판정 A-B , C-D
 
 
 int N;
-int DP[51][1276];
-int dp(int n, int x) {
+ll DP[51][1276];
+ll dp(int n, int x) {
 
     if (n == N + 1) {
         if (x == 0) return 1;
