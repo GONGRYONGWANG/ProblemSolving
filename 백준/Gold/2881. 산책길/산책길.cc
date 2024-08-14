@@ -153,15 +153,12 @@ void solve() {
 
     int N;
     cin >> N;
-
-    unordered_set<pii, PiiHasher> st;
     vector<pii> arrx, arry;
     for (int i = 0; i < N; i++) {
         int x, y;
         cin >> x >> y;
         arrx.push_back({ x,y });
         arry.push_back({ y,x });
-        st.insert({ x,y });
     }
     sort(arrx.begin(), arrx.end());
     sort(arry.begin(), arry.end());
@@ -172,11 +169,10 @@ void solve() {
         int x1, y1, x2, y2;
         cin >> x1 >> y1 >> x2 >> y2;
         int ret = 0;
-        ret += lower_bound(arrx.begin(), arrx.end(), make_pair(x1, y2)) - upper_bound(arrx.begin(), arrx.end(), make_pair(x1, y1));
-        ret += lower_bound(arrx.begin(), arrx.end(), make_pair(x2, y2)) - upper_bound(arrx.begin(), arrx.end(), make_pair(x2, y1));
+        ret += upper_bound(arrx.begin(), arrx.end(), make_pair(x1, y2)) - lower_bound(arrx.begin(), arrx.end(), make_pair(x1, y1));
+        ret += upper_bound(arrx.begin(), arrx.end(), make_pair(x2, y2)) - lower_bound(arrx.begin(), arrx.end(), make_pair(x2, y1));
         ret += lower_bound(arry.begin(), arry.end(), make_pair(y1, x2)) - upper_bound(arry.begin(), arry.end(), make_pair(y1, x1));
         ret += lower_bound(arry.begin(), arry.end(), make_pair(y2, x2)) - upper_bound(arry.begin(), arry.end(), make_pair(y2, x1));
-        ret += st.count({ x1,y1 }) + st.count({ x1,y2 }) + st.count({ x2,y1 }) + st.count({ x2,y2 });
         cout << ret << endl;
     }
 
