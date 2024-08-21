@@ -158,7 +158,7 @@ void solve() {
         cin >> arr[i];
         M += arr[i];
     }
-    if (arr.back() > 2) {
+    if (arr[N] > 2) {
         cout << -1;
         return;
     }
