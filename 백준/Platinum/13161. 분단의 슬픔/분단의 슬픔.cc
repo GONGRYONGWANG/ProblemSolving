@@ -429,7 +429,7 @@ void solve() {
         for (int j = 1; j <= N; j++) {
             int x;
             cin >> x;
-            if (i < j) flow.addEdge(i, j, x, 0);
+            if (x!=0 && i < j) flow.addEdge(i, j, x, 0);
         }
     }
 
