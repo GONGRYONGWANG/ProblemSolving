@@ -1,4 +1,4 @@
-// template: https://github.com/GONGRYONGWANG/ProblemSolving/blob/main/gcctemplate_for_pbds%26rope
+// template: https://github.com/GONGRYONGWANG/ProblemSolving/blob/main/gcctemplate_for_pbds&rope
 #include<bits/stdc++.h>
 #include<ext/rope>
 /*
