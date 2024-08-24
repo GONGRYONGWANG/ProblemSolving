@@ -1,3 +1,4 @@
+// template: https://github.com/GONGRYONGWANG/ProblemSolving/blob/main/template.txt
 #include<iostream>
 #include<iomanip>
 #include<cstdio>
@@ -224,6 +225,7 @@ struct MF { // Dinic
     MF(int n) : n(n), adj(n), level(n), ptr(n) {}
 
     void addEdge(int u, int v, long long cap, bool directed = 1) {
+        if (cap == 0) return;
         adj[u].emplace_back(v, adj[v].size(), cap);
         if(!directed) adj[v].emplace_back(u, adj[u].size() - 1, cap);
         else adj[v].emplace_back(u, adj[u].size() - 1, 0); 
@@ -303,6 +305,7 @@ struct MCMF { //SPFA
     }
 
     void addEdge(int u, int v, long long cap, long long cost) {
+        if (cap == 0) return;
         adj[u].emplace_back(v, adj[v].size(), cap, cost);
         adj[v].emplace_back(u, adj[u].size() - 1, 0, -cost); // 역방향 간선
     }
@@ -374,14 +377,8 @@ struct MCMF { //SPFA
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-
-
 void solve() {
-
-
-
-
-
+    
 
 
 
@@ -396,4 +393,3 @@ int main() {
     }
     return 0;
 }
-
