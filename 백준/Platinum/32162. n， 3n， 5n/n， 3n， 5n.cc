@@ -912,8 +912,9 @@ void solve() {
     int T;
     cin >> T;
     set<ll> st;
-    for (int i = 1; i <= 1000000; i++) {
-        if (gcd(i, 15) == 1) st.insert(i);
+    for (ll i = 1; st.size() < 100000; i++) {
+        if (i % 3 == 0 || i % 5 == 0) continue;
+        st.insert(i);
     }
     vector<ll> arr;
     arr.push_back(0);
