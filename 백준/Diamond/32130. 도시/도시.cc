@@ -937,10 +937,34 @@ struct TwoSat { // for SCC and TwoSat.
 
 bool board[12][12];
 int arr[12][12];
+int comp[531441];
+int decomp[47321];
 
 void solve() {
+
     int N, K;
     cin >> N >> K;
+
+    int cnt = 0;
+    for (int hist = 0; hist < pow(3,N); hist++) {
+        int prv = -1;
+        int h = hist;
+        bool b = true;
+        for (int j = 0; j < N; j++) {
+            if (prv == 2 && h % 3 == 0) {
+                b = false;
+            }
+            if (prv == 0 && h % 3 == 2) b = false;
+            prv = h % 3;
+            h /= 3;
+        }
+        if (b) {
+            comp[hist] = cnt;
+            decomp[cnt] = hist;
+            cnt += 1;
+        }
+    }
+
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             cin >> board[i][j];
@@ -955,7 +979,8 @@ void solve() {
 
     int div = pow(3, N - 1);
 
-    vector<unordered_map<int, ll>> DP(K + 1);
+    vector<vector<ll>> DP(K + 1, vector<ll>(cnt,-1));
+
     for (int hist = 0; hist < div * 3; hist++) {
         int h = hist;
         bool b = true;
@@ -965,16 +990,19 @@ void solve() {
             if (h % 3 == 1 && !board[0][N - 1 - j]) k += 1;
             h /= 3;
         }
-        if (b && k <= K) DP[k][hist] = 0;
+        if (b && k <= K) {
+            DP[k][comp[hist]] = 0;
+        }
     }
 
     for (int i = 1; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            vector<unordered_map<int, ll>> nx(K + 1);
+            vector<vector<ll>> nx(K + 1, vector<ll>(cnt, -1));
             for (int k = 0; k <= K; k++) {
-                for (auto& x : DP[k]) {
-                    int hist = x.first;
-                    ll val = x.second;
+                for (int idx = 0; idx < cnt; idx++) {
+                    if (DP[k][idx] == -1) continue;
+                    int hist = decomp[idx];
+                    ll val = DP[k][idx];
                     if (board[i][j]) {
                         ll nxval = val;
                         if (hist / div == 2) nxval += arr[i - 1][j];
@@ -985,13 +1013,14 @@ void solve() {
                         }
                         else nxthist += 1;
 
-                        nx[k][nxthist] = max(nx[k][nxthist], nxval);
+                        nx[k][comp[nxthist]] = max(nx[k][comp[nxthist]], nxval);
                     }
                     else {
                         int nxthist = hist;
                         if (nxthist % 3 != 0) nxthist += 1 - nxthist % 3;
                         nxthist = nxthist % div * 3;
-                        nx[k][nxthist] = max(nx[k][nxthist], val);
+
+                        nx[k][comp[nxthist]] = max(nx[k][comp[nxthist]], val);
 
                         if (k == K) continue;
 
@@ -1004,22 +1033,21 @@ void solve() {
                         }
                         else nxthist += 1;
 
-                        nx[k + 1][nxthist] = max(nx[k + 1][nxthist], nxval);
+                        nx[k + 1][comp[nxthist]] = max(nx[k + 1][comp[nxthist]], nxval);
                     }
                 }
             }
             DP = nx;
         }
     }
-
+    
     ll ans = 0;
     for (int k = 0; k <= K; k++) {
-        for (auto& x : DP[k]) {
-            ans = max(ans, x.second);
+        for (int idx = 0; idx < cnt; idx++) {
+            ans = max(ans, DP[k][idx]);
         }
     }
     cout << ans;
-
 
 
 }
