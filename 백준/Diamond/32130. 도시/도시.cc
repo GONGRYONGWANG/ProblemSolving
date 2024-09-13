@@ -936,8 +936,8 @@ struct TwoSat { // for SCC and TwoSat.
 /////////////////////////////////////////////////////////////////////////////////////
 
 bool board[12][12];
-ll W[12][12];
-// 0:개발x 1:개발o 가능성x 2: 개발o 가능성 o
+int arr[12][12];
+
 void solve() {
     int N, K;
     cin >> N >> K;
@@ -946,74 +946,80 @@ void solve() {
             cin >> board[i][j];
         }
     }
+
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            cin >> W[i][j];
+            cin >> arr[i][j];
         }
     }
 
-    vector<unordered_map<deque<int>, ll, DequeHasher>> DP(K + 1);
-    DP[0][deque<int>(N, 0)] = 0;
-    for (int i = 0; i < N; i++) {
+
+    unordered_map<pii, ll, PiiHasher> DP;
+    for (int hist = 0; hist < pow(3, N); hist++) {
+        int h = hist;
+        bool b = true;
+        int k = 0;
         for (int j = 0; j < N; j++) {
-            vector<unordered_map<deque<int>, ll, DequeHasher>> nxt(K + 1);
-            if (board[i][j]) {
-                for (int k = 0; k <= K; k++) {
-                    for (auto x : DP[k]) {
-                        deque<int> hist = x.first;
-                        ll val = x.second;
+            if (h % 3 == 2 || (h % 3 == 0 && board[0][N - 1 - j])) b = false;
+            if (h % 3 == 1 && !board[0][N - 1 - j]) k += 1;
+            h /= 3;
+        }
+        if (b && k<=K) DP[{hist, k}] = 0;
+    }
 
-                        deque<int> nxthist = hist;
+    for (int i = 1; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            unordered_map<pii, ll, PiiHasher> nx;
+            for (auto& x : DP) {
+                int hist = x.first.first;
+                int k = x.first.second;
+                ll val = x.second;
+                if (board[i][j]) {
 
-                        nxthist.pop_front();
-                        if (hist.front() != 0 && j != 0 && hist.back() != 0 && j != N - 1 && i != N - 1 && i != 0) {
-                            nxthist.push_back(2);
-                        }
-                        else nxthist.push_back(1);
-                        if (!nxt[k].count(nxthist)) nxt[k][nxthist] = 0;
-                        if (i == 0) nxt[k][nxthist] = max(nxt[k][nxthist], val);
-                        else nxt[k][nxthist] = max(nxt[k][nxthist], val + W[i - 1][j] * (hist.front() == 2));
+                    ll nxval = val;
+                    if (hist / (int)pow(3, N - 1) == 2) nxval += arr[i - 1][j];
+
+                    int nxthist = hist % (int)pow(3, N - 1) * 3;
+                    if (hist / (int)pow(3, N - 1) != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
+                        nxthist += 2;
                     }
+                    else nxthist += 1;
+
+                    nx[{nxthist, k}] = max(nx[{nxthist, k}], nxval);
+                }
+                else {
+
+                    int nxthist = hist;
+                    if (nxthist % 3 != 0) nxthist += 1 - nxthist % 3;
+                    nxthist = nxthist % (int)pow(3, N - 1) * 3;
+                    nx[{nxthist, k}] = max(nx[{nxthist, k}], val);
+
+                    if (k == K) continue;
+                    
+                    ll nxval = val;
+                    if (hist / (int)pow(3, N - 1) == 2) nxval += arr[i - 1][j];
+
+                    nxthist = hist % (int)pow(3, N - 1) * 3;
+                    if (hist / (int)pow(3, N - 1) != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
+                        nxthist += 2;
+                    }
+                    else nxthist += 1;
+
+                    nx[{nxthist, k + 1}] = max(nx[{nxthist, k + 1}], nxval);
                 }
             }
-
-            else {
-                for (int k = 0; k <= K; k++) {
-                    for (auto x : DP[k]) {
-                        deque<int> hist = x.first;
-                        ll val = x.second;
-
-                        deque<int> nxthist = hist;
-
-                        nxthist.pop_front();
-                        if (j!=0 && nxthist.back() == 2) nxthist.back() = 1;
-                        nxthist.push_back(0);
-                        if (!nxt[k].count(nxthist)) nxt[k][nxthist] = 0;
-                        nxt[k][nxthist] = max(nxt[k][nxthist], val);
-
-                        if (k == K) continue;
-
-                        nxthist = hist;
-                        nxthist.pop_front();
-                        if (hist.front() != 0 && j != 0 && hist.back() != 0 && j != N - 1 && i != N - 1 && i != 0) {
-                            nxthist.push_back(2);
-                        }
-                        else nxthist.push_back(1);
-                        if (!nxt[k + 1].count(nxthist)) nxt[k + 1][nxthist] = 0;
-                        if (i == 0) nxt[k + 1][nxthist] = max(nxt[k + 1][nxthist], val);
-                        else nxt[k + 1][nxthist] = max(nxt[k + 1][nxthist], val + W[i - 1][j] * (hist.front() == 2));
-                    }
-                }
-            }
-            DP = nxt;
+            DP = nx;
         }
     }
 
     ll ans = 0;
-    for (auto x : DP[K]) {
+    for (auto& x : DP) {
         ans = max(ans, x.second);
     }
+
     cout << ans;
+
+
 
 }
 
