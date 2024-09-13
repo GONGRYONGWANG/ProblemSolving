@@ -953,9 +953,10 @@ void solve() {
         }
     }
 
+    int div = pow(3, N - 1);
 
-    unordered_map<pii, ll, PiiHasher> DP;
-    for (int hist = 0; hist < pow(3, N); hist++) {
+    vector<unordered_map<int, ll>> DP(K + 1);
+    for (int hist = 0; hist < div * 3; hist++) {
         int h = hist;
         bool b = true;
         int k = 0;
@@ -964,48 +965,47 @@ void solve() {
             if (h % 3 == 1 && !board[0][N - 1 - j]) k += 1;
             h /= 3;
         }
-        if (b && k<=K) DP[{hist, k}] = 0;
+        if (b && k <= K) DP[k][hist] = 0;
     }
 
     for (int i = 1; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            unordered_map<pii, ll, PiiHasher> nx;
-            for (auto& x : DP) {
-                int hist = x.first.first;
-                int k = x.first.second;
-                ll val = x.second;
-                if (board[i][j]) {
+            vector<unordered_map<int, ll>> nx(K + 1);
+            for (int k = 0; k <= K; k++) {
+                for (auto& x : DP[k]) {
+                    int hist = x.first;
+                    ll val = x.second;
+                    if (board[i][j]) {
+                        ll nxval = val;
+                        if (hist / div == 2) nxval += arr[i - 1][j];
 
-                    ll nxval = val;
-                    if (hist / (int)pow(3, N - 1) == 2) nxval += arr[i - 1][j];
+                        int nxthist = hist % div * 3;
+                        if (hist / div != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
+                            nxthist += 2;
+                        }
+                        else nxthist += 1;
 
-                    int nxthist = hist % (int)pow(3, N - 1) * 3;
-                    if (hist / (int)pow(3, N - 1) != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
-                        nxthist += 2;
+                        nx[k][nxthist] = max(nx[k][nxthist], nxval);
                     }
-                    else nxthist += 1;
+                    else {
+                        int nxthist = hist;
+                        if (nxthist % 3 != 0) nxthist += 1 - nxthist % 3;
+                        nxthist = nxthist % div * 3;
+                        nx[k][nxthist] = max(nx[k][nxthist], val);
 
-                    nx[{nxthist, k}] = max(nx[{nxthist, k}], nxval);
-                }
-                else {
+                        if (k == K) continue;
 
-                    int nxthist = hist;
-                    if (nxthist % 3 != 0) nxthist += 1 - nxthist % 3;
-                    nxthist = nxthist % (int)pow(3, N - 1) * 3;
-                    nx[{nxthist, k}] = max(nx[{nxthist, k}], val);
+                        ll nxval = val;
+                        if (hist / div == 2) nxval += arr[i - 1][j];
 
-                    if (k == K) continue;
-                    
-                    ll nxval = val;
-                    if (hist / (int)pow(3, N - 1) == 2) nxval += arr[i - 1][j];
+                        nxthist = hist % div * 3;
+                        if (hist / div != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
+                            nxthist += 2;
+                        }
+                        else nxthist += 1;
 
-                    nxthist = hist % (int)pow(3, N - 1) * 3;
-                    if (hist / (int)pow(3, N - 1) != 0 && j != 0 && j != N - 1 && hist % 3 != 0) {
-                        nxthist += 2;
+                        nx[k + 1][nxthist] = max(nx[k + 1][nxthist], nxval);
                     }
-                    else nxthist += 1;
-
-                    nx[{nxthist, k + 1}] = max(nx[{nxthist, k + 1}], nxval);
                 }
             }
             DP = nx;
@@ -1013,10 +1013,11 @@ void solve() {
     }
 
     ll ans = 0;
-    for (auto& x : DP) {
-        ans = max(ans, x.second);
+    for (int k = 0; k <= K; k++) {
+        for (auto& x : DP[k]) {
+            ans = max(ans, x.second);
+        }
     }
-
     cout << ans;
 
 
