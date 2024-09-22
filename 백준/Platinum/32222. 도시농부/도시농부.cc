@@ -470,7 +470,7 @@ void solve() {
     cin >> N >> M;
     int cnt1 = 0, cnt2 = 0, cnt3 = 0;
     vector<int> arr2;
-    vector<int> arr3;
+    pii mx = { -1,-1 };
     for (int i = 0; i < N; i++) {
         int x;
         cin >> x;
@@ -481,7 +481,12 @@ void solve() {
         }
         else {
             cnt3 += 1;
-            arr3.push_back(x);
+            if (x >= mx.first) {
+                mx = { x,mx.first };
+            }
+            else if (x > mx.second) {
+                mx = { mx.first,x };
+            }
         }
     }
 
@@ -496,13 +501,12 @@ void solve() {
         }
         else if (cnt2 == 2) {
             sort(arr2.begin(), arr2.end());
-            sort(arr3.rbegin(), arr3.rend());
-            if (arr2.front() + arr3.front() >= M) {
+            if (arr2.front() + mx.first>= M) {
                 cnt2 -= 2;
                 cnt1 += 2;
                 ans += 1;
             }
-            else if (arr2.back() + arr3.front() >= M && arr3[1]*4>=M) {
+            else if (arr2.back() + mx.first >= M && mx.second!=-1 && mx.second*4>=M) {
                 cnt2 -= 2;
                 cnt3 -= 2;
                 ans += 2;
