@@ -469,23 +469,28 @@ void solve() {
     int N, M;
     cin >> N >> M;
     int cnt1 = 0, cnt2 = 0, cnt3 = 0;
-    vector<int> arr2;
-    pii mx = { -1,-1 };
+    pii mx2 = { -1,-1 };
+    pii mx3 = { -1,-1 };
     for (int i = 0; i < N; i++) {
         int x;
         cin >> x;
         if (x >= M) cnt1 += 1;
         else if (2 * x >= M) {
             cnt2 += 1;
-            arr2.push_back(x);
+            if (x >= mx2.first) {
+                mx2 = { x,mx2.first };
+            }
+            else if (x > mx2.second) {
+                mx2 = { mx2.first,x };
+            }
         }
         else {
             cnt3 += 1;
-            if (x >= mx.first) {
-                mx = { x,mx.first };
+            if (x >= mx3.first) {
+                mx3 = { x,mx3.first };
             }
-            else if (x > mx.second) {
-                mx = { mx.first,x };
+            else if (x > mx3.second) {
+                mx3 = { mx3.first,x };
             }
         }
     }
@@ -500,13 +505,12 @@ void solve() {
             ans += 1;
         }
         else if (cnt2 == 2) {
-            sort(arr2.begin(), arr2.end());
-            if (arr2.front() + mx.first>= M) {
+            if (mx2.second + mx3.first>= M) {
                 cnt2 -= 2;
                 cnt1 += 2;
                 ans += 1;
             }
-            else if (arr2.back() + mx.first >= M && mx.second!=-1 && mx.second*4>=M) {
+            else if (mx2.first + mx3.first >= M && mx3.second!=-1 && mx3.second*4>=M) {
                 cnt2 -= 2;
                 cnt3 -= 2;
                 ans += 2;
