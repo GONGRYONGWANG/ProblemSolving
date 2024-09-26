@@ -463,10 +463,6 @@ struct TwoSat { // for SCC and TwoSat.
 /////////////////////////////////////////////////////////////////////////////////////
 
 int parent[500001];
-int findp(int x) {
-    if (parent[x] == x) return x;
-    return parent[x] = findp(parent[x]);
-}
 ll val[500001];
 
 void solve() {
@@ -479,19 +475,19 @@ void solve() {
             ll x;
             cin >> x;
             parent[i] = i;
-            val[i] = val[findp(i - 1)] + x;
+            val[i] = val[parent[i - 1]] + x;
         }
         else if (s == "pop") {
-            parent[i] = findp(findp(i - 1) - 1);
+            parent[i] = parent[parent[i - 1] - 1];
         }
         else if (s == "restore") {
             int x;
             cin >> x;
-            parent[i] = findp(x);
+            parent[i] = parent[x];
         }
         else {
-            parent[i] = findp(i - 1);
-            cout << val[findp(i)] << endl;
+            parent[i] = parent[i-1];
+            cout << val[parent[i]] << endl;
         }
     }
     
