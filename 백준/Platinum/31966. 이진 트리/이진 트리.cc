@@ -466,20 +466,7 @@ ll sz[100001];
 ll S[100001];
 ll f_lmost[100001];
 ll f_rmost[100001];
-pii child[100001];
 ll mod = 1e9 + 7;
-
-ll get_S(int x) {
-    if (sz[x] != 0) return S[x];
-    int l = child[x].first;
-    int r = child[x].second;
-    get_S(l); get_S(r);
-    sz[x] = sz[l] + sz[r];
-    f_lmost[x] = (f_lmost[l] + f_lmost[r] + sz[r] - 1) % mod;
-    f_rmost[x] = (f_rmost[r] + f_rmost[l] + sz[l] - 1) % mod;
-    S[x] = (S[l] + S[r] + f_rmost[l] * sz[r] + f_lmost[r] * sz[l] - 1) % mod;
-    return S[x];
-}
 
 
 void solve() {
@@ -490,10 +477,13 @@ void solve() {
     f_lmost[0] = 1;
     f_rmost[0] = 1;
     for (int i = 1; i <= N; i++) {
-        cin >> child[i].first >> child[i].second;
-    }
-    for (int i = 1; i <= N; i++) {
-        cout << get_S(i) << endl;
+        int l, r;
+        cin >> l >> r;
+        sz[i] = (sz[l] + sz[r]) % mod;
+        f_lmost[i] = (f_lmost[l] + f_lmost[r] + sz[r] + mod - 1) % mod;
+        f_rmost[i] = (f_rmost[r] + f_rmost[l] + sz[l] + mod - 1) % mod;
+        S[i] = (S[l] + S[r] + f_rmost[l] * sz[r] % mod + f_lmost[r] * sz[l] % mod + mod - 1) % mod;
+        cout << S[i] << endl;
     }
 
 }
