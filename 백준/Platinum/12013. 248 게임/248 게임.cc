@@ -454,18 +454,16 @@ void solve() {
     }
     int ans = 0;
     for (int l = 0; l < N; l++) {
-        for (int r = l; r < N; r++) {
-            stack<int> st;
-            for (int i = l; i <= r; i++) {
-                int x = arr[i];
-                while (!st.empty() && st.top() == x) {
-                    st.pop();
-                    x += 1;
-                }
-                st.push(x);
+        deque<int> q;
+        for (int i = l; i < N; i++) {
+            int x = arr[i];
+            while (!q.empty() && q.back() == x) {
+                x += 1;
+                q.pop_back();
             }
-            if (st.size() == 1) ans = max(ans, st.top());
+            q.push_back(x);
         }
+        ans = max(ans, q.front());
     }
     cout << ans;
 
