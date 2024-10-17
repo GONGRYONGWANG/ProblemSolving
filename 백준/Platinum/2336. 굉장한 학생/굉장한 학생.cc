@@ -442,26 +442,7 @@ answer.resize(2 * n);
 //int dy[8] = { -1,0,1,-1,1,-1,0,1 };
 
 
-int tree[2000000];
 
-int get(int node, int start, int end, int left, int right) {
-    if (left > end || right < start) return 0;
-    if (left <= start && right >= end) return tree[node];
-    int mid = (start + end) / 2;
-    return max(get(node * 2, start, mid, left, right), get(node * 2 + 1, mid + 1, end, left, right));
-}
-
-void update(int node, int start, int end, int target, int val) {
-    if (target > end || target < start) return;
-    if (start == end) {
-        tree[node] = val;
-        return;
-    }
-    int mid = (start + end) / 2;
-    update(node * 2, start, mid, target, val);
-    update(node * 2 + 1, mid + 1, end, target, val);
-    tree[node] = max(tree[node * 2], tree[node * 2 + 1]);
-}
 
 void solve() {
 
@@ -478,13 +459,27 @@ void solve() {
     }
     sort(arr.rbegin(), arr.rend());
 
+    map<int, int> m;
+
     int ans = 0;
     for (int i = 0; i < N; i++) {
         int a = arr[i][1];
         int b = arr[i][2];
-        int x = get(1, 1, N, a, N);
-        if (x < b) ans += 1;
-        update(1, 1, N, a, b);
+        auto it = m.upper_bound(a);
+        if (it!= m.end() && it->second > b) continue;
+
+        ans += 1;
+        m[a] = b;
+
+        it = m.find(a);
+
+        while (it != m.begin()) {
+            auto lit = it;
+            lit--;
+            if (lit->second < b) m.erase(lit);
+            else break;
+        }
+
     }
 
     cout << ans;
