@@ -66,7 +66,38 @@ struct DequeHasher {
     }
 };
 
-string manacher_preprocess(string& s) {
+vector<vector<ll>> matmul( const vector<vector<ll>>& a, const vector<vector<ll>>& b, ll mod = 0) { // 행렬 곱
+    assert(a[0].size() == b.size());
+    vector<vector<ll>> ret(a.size(), vector<ll>(b[0].size(), 0));
+    for (int i = 0; i < a.size(); i++) {
+        for (int j = 0; j < b[0].size(); j++) {
+            for (int k = 0; k < a[0].size(); k++) {
+                ret[i][j] += a[i][k] * b[k][j];
+                if(mod) ret[i][j] %= mod;
+            }
+        }
+    }
+    return ret;
+}
+
+vector<vector<ll>> powmat(const vector<vector<ll>>& mat, ll n, ll mod = 0) { // 행렬 거듭제곱
+    if (n == 1) return mat;
+    if (n % 2) {
+        return matmul(powmat(mat, n - 1, mod), mat , mod);
+    }
+    vector<vector<ll>> half = powmat(mat, n / 2, mod);
+    return matmul(half, half, mod);
+}
+
+ll fibo(ll n, ll mod = 0) { // 행렬 거듭제곱 이용 피보나치 
+    if (n < 2) {
+        return n;
+    }
+    vector<vector<ll>> ret = matmul(powmat({ {1,1},{1,0} }, n - 1, mod), { {1},{0} }, mod);
+    return ret[0][0];
+}
+
+string manacher_preprocess(string& s) { // 매내처 선행작업
     string ret = "";
     char tmp = '#';
     for (char x : s) {
@@ -76,6 +107,7 @@ string manacher_preprocess(string& s) {
     ret += tmp;
     return ret;
 }
+
 vector<ll> manacher(string& s) { // O(s.length())
     int N = s.length();
     vector<ll> ret(N, 0);
