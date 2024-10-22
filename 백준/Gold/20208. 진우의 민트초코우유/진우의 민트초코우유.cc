@@ -441,29 +441,24 @@ struct TwoSat { // for SCC and TwoSat.
 //int dx[8] = { -1,-1,-1,0,0,1,1,1 };
 //int dy[8] = { -1,0,1,-1,1,-1,0,1 };
 
+
+int popcount(uint n) { // https://blog.naver.com/jinhan814/222540111549
+    n = (n >> 1 & 0x55555555) + (n & 0x55555555);
+    n = (n >> 2 & 0x33333333) + (n & 0x33333333);
+    n = (n >> 4 & 0x0F0F0F0F) + (n & 0x0F0F0F0F);
+    n = (n >> 8 & 0x00FF00FF) + (n & 0x00FF00FF);
+    n = (n >> 16 & 0x0000FFFF) + (n & 0x0000FFFF);
+    return n;
+}
+
 int N, M, H;
 vector<pii> arr;
 int dist(int a, int b) {
     return abs(arr[a].first - arr[b].first) + abs(arr[a].second - arr[b].second);
 }
 int K = 0;
-int DP[11][(1 << 10)][101];
-int dp(int cur, int hist, int m) {
-    if (DP[cur][hist][m] != -1) return DP[cur][hist][m];
-
-    int ret;
-    if (dist(cur, K) <= m) ret = 1;
-    else ret = -inf;
-
-    for (int i = 0; i < K; i++) {
-        if (hist & (1 << i)) continue;
-        if (dist(cur, i) > m) continue;
-        ret = max(ret, 1 + dp(i, hist | (1 << i), m - dist(cur, i) + H));
-    }
-
-    return DP[cur][hist][m] = ret;
-}
-
+int DP[11][(1 << 10)];
+int cnt[11][(1 << 10)];
 
 void solve() {
     cin >> N >> M >> H;
@@ -486,16 +481,33 @@ void solve() {
 
     for (int i = 0; i <= K; i++) {
         for (int j = 0; j < (1 << K); j++) {
-            for (int m = 0; m <= 100; m++) {
-                DP[i][j][m] = -1;
-            }
+            DP[i][j] = -inf;
         }
     }
 
+    int ans = 0;
+    DP[K][0] = M;
+    queue<pii> q;
+    q.push({ K,0 });
+    while (!q.empty()) {
+        int cur = q.front().first;
+        int hist = q.front().second;
+        int m = DP[cur][hist];
+        q.pop();
+        if (dist(cur, K) <= m) ans = max(ans, popcount(hist));
 
-    cout << dp(K, 0, M) - 1;
+        for (int i = 0; i < K; i++) {
+            if (hist & (1 << i)) continue;
 
+            cnt[i][hist | (1 << i)] += 1; 
 
+            if (m - dist(cur, i) >= 0) DP[i][hist | (1 << i)] = max(DP[i][hist | (1 << i)], m - dist(cur, i) + H);
+
+            if (cnt[i][hist | (1 << i)] >= (popcount(hist | (1 << i)) - 1)) q.push({ i,hist | (1 << i) });
+        }
+    }
+
+    cout << ans;
 }
 
 int main() {
