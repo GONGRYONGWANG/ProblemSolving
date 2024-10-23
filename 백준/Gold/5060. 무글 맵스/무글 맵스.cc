@@ -443,29 +443,30 @@ struct TwoSat { // for SCC and TwoSat.
 
 
 int N, M;
-ld DP[200][200][201]; 
+
 ld arr[200];
 ld err[200][200];
-ld dp(int n, int l, int m) {
-    if (m < 0) return inf;
-    if (n == N) {
+ld DP[200][200];
+ld dp(int cur, int m) {
+    if (DP[cur][m] != -1) return DP[cur][m];
+    if (m == 0 && cur != N - 1) return inf;
+    if (cur == N - 1) {
         if (m != 0) return inf;
-        if (l == N - 1) return 0;
-        else return inf;
+        return DP[cur][m] = 0;
     }
-    if (DP[n][l][m] != -1) return DP[n][l][m];
-    ld ret = dp(n + 1, n, m - 1) + err[l][n];
-    ret = min(ret, dp(n + 1, l, m));
-    return DP[n][l][m] = ret;
 
+    ld ret = inf;
+    for (int i = cur + 1; i < N; i++) {
+        ret = min(ret, err[cur][i] + dp(i, m - 1));
+    }
+
+    return DP[cur][m] = ret;
 }
 void solve() {
     cin >> N >> M;
     for (int cur = 0; cur < N; cur++) {
-        for (int l = 0; l < N; l++) {
-            for (int m = 0; m <= M; m++) {
-                DP[cur][l][m] = -1;
-            }
+        for (int m = 0; m <= M; m++) {
+            DP[cur][m] = -1;
         }
     }
     
@@ -485,7 +486,7 @@ void solve() {
 
     cout << fixed;
     cout.precision(4);
-    cout << dp(1, 0, M - 1) / N << endl;
+    cout << dp(0, M - 1) / N << endl;
 
 }
 
