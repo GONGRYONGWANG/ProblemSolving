@@ -457,17 +457,15 @@ void solve() {
 
     int ans = 0;
 
-    set<int> st;
+    int mn = N;
+    int mx = -1;
+
     for (int i = 0; i < N; i++) {
         int val = arr[i].first;
-        int idx = arr[i].second;
-        st.insert(idx);
-        if (*st.begin() < idx) {
-            ans = max(ans, (idx - *st.begin() - 1) * val);
-        }
-        if (*st.rbegin() > idx) {
-            ans = max(ans, (*st.rbegin() - idx - 1) * val);
-        }
+        int x = arr[i].second;
+        mn = min(mn, x);
+        mx = max(mx, x);
+        ans = max(ans, val * (max(x - mn, mx - x) - 1));
     }
 
     cout << ans;
