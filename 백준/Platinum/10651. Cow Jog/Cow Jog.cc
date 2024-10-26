@@ -453,7 +453,6 @@ void solve() {
         arr[i].second = arr[i].first + arr[i].second * T;
     }
 
-    sort(arr.begin(), arr.end());
     multiset<ll> st;
     vector<ll> v;
     for (int i = 0; i < N; i++) {
