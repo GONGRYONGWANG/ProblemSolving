@@ -97,6 +97,41 @@ ll fibo(ll n, ll mod = 0) { // 행렬 거듭제곱 이용 피보나치
     return ret[0][0];
 }
 
+vector<int> getPi(const string s) { // KMP 선행 작업
+    vector<int> pi(s.size(), 0);
+    int j = 0;
+    for (int i = 1; i < s.size(); i++) {
+        while ((j > 0) && (s[i] != s[j])) {
+            j = pi[j - 1];
+        }
+        if (s[i] == s[j]) {
+            j++;
+            pi[i] = j;
+        }
+    }
+    return pi;
+}
+
+vector<int> kmp(const string& s, const string& t, const vector<int>& pi) { //KMP
+    vector<int> result;
+    int j = 0;
+    for (int i = 0; i < t.size(); i++) {
+        while ((j > 0) && (t[i] != s[j])) {
+            j = pi[j - 1];
+        }
+        if (t[i] == s[j]) {
+            if (j == s.size() - 1) {
+                result.push_back(i - s.size() + 1);
+                j = pi[j];
+            }
+            else {
+                j++;
+            }
+        }
+    }
+    return result;
+}
+
 string manacher_preprocess(string& s) { // 매내처 선행작업
     string ret = "";
     char tmp = '#';
