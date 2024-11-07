@@ -443,28 +443,90 @@ struct TwoSat { // for SCC and TwoSat.
 
 
 
+int parent[200001];
+int findp(int x) {
+    if (parent[x] == x) return x;
+    return parent[x] = findp(parent[x]);
+}
+
+bool degree[200001];
+
+set<int> st[200001];
+int cnt[200001];
 
 void solve() {
+
     int N, M;
     cin >> N >> M;
-    vector<bool> arr(N + 1, false);
+    for (int i = 1; i <= N; i++) parent[i] = i;
     for (int i = 0; i < M; i++) {
         int u, v;
         cin >> u >> v;
-        arr[u] = !arr[u];
-        arr[v] = !arr[v];
+        parent[findp(u)] = findp(v);
+        degree[u] = !degree[u];
+        degree[v] = !degree[v];
     }
 
-    vector<int> v;
     for (int i = 1; i <= N; i++) {
-        if (arr[i]) v.push_back(i);
+        cnt[findp(i)] += 1;
+        if (degree[i]) {
+            st[findp(i)].insert(i);
+        }
     }
 
-    cout << v.size() / 2 << endl;
-    for (int i = 0; i < v.size(); i += 2) {
-        cout << v[i] << " " << v[i + 1] << endl;
+    vector<pii> arr;
+
+    for (int i = 1; i <= N; i++) {
+        if (i == findp(i)) {
+            arr.push_back({ st[i].size(),i });
+        }
     }
 
+    sort(arr.rbegin(), arr.rend());
+
+    vector<pii> ans;
+
+
+    for (int i = 1; i < arr.size(); i++) {
+        int up = arr[0].second;
+        int vp = arr[i].second;
+        
+        int u, v;
+        if (st[up].empty()) {
+            u = up;
+            st[up].insert(up);
+        }
+        else {
+            u = *st[up].begin();
+            st[up].erase(st[up].begin());
+        }
+        if (st[vp].empty()) {
+            v = vp;
+            st[vp].insert(vp);
+        }
+        else {
+            v = *st[vp].begin();
+            st[vp].erase(st[vp].begin());
+        }
+        ans.push_back({ u,v });
+        for (auto it = st[vp].begin(); it != st[vp].end(); it++) {
+            st[up].insert(*it);
+        }
+    }
+
+    auto it = st[arr[0].second].begin();
+    while (it != st[arr[0].second].end()) {
+        auto nit = it;
+        nit++;
+        ans.push_back({ *it, *nit });
+        it++;
+        it++;
+    }
+
+    cout << ans.size() << endl;
+    for (pii& ret : ans) {
+        cout << ret.first << " " << ret.second << endl;
+    }
 
 }
 
