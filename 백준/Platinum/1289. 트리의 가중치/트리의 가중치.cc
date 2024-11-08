@@ -443,21 +443,20 @@ struct TwoSat { // for SCC and TwoSat.
 
 
 vector<pll> E[100001];
-pll sz[1000001];
+ll DP[1000001];
 ll mod = 1e9 + 7;
 ll ans;
 
 void dfs(int x, int p) {
-    sz[x] = { 0,0 };
+    DP[x] = 0;
     for (pll& e : E[x]) {
         int nx = e.first;
         if (nx == p) continue;
         dfs(nx, x);
-        ans += (sz[x].second + 1) * ((sz[nx].second + 1) * e.second % mod) % mod;
+        ans += (DP[x] + 1) * ((DP[nx] + 1) * e.second % mod) % mod;
         ans %= mod;
-        sz[x].second += (sz[nx].second + 1) * e.second % mod;
-        sz[x].second %= mod;
-        sz[x].first += 1 + sz[nx].first;
+        DP[x] += (DP[nx] + 1) * e.second % mod;
+        DP[x] %= mod;
     }
 }
 
