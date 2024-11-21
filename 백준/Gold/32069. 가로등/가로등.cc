@@ -449,7 +449,7 @@ struct TwoSat { // for SCC and TwoSat.
 
 ll tree[2000000];
 ll lazy[2000000];
-void lazyProp(int node, int start, int end) {
+void lazyProp(int node, ll start, ll end) {
     if (lazy[node] == 0) return;
     if (start == end) tree[node] += lazy[node];
     else {
@@ -458,7 +458,7 @@ void lazyProp(int node, int start, int end) {
     }
     lazy[node] = 0;
 }
-void update(int node, int start, int end, int left, int right, int val) {
+void update(int node, ll start, ll end, ll left, ll right, ll val) {
     lazyProp(node, start, end);
     if (left > end || right < start) return;
     if (left <= start && right >= end) {
@@ -466,16 +466,16 @@ void update(int node, int start, int end, int left, int right, int val) {
         lazyProp(node, start, end);
         return;
     }
-    int mid = (start + end) / 2;
+    ll mid = (start + end) / 2;
     update(node * 2, start, mid, left, right, val);
     update(node * 2 + 1, mid + 1, end, left, right, val);
 }
 
-ll get(int node, int start, int end, int x) {
+ll get(int node, ll start, ll end, ll x) {
     lazyProp(node, start, end);
     if (x > end || x < start) return 0;
     if (start == end) return tree[node];
-    int mid = (start + end) / 2;
+    ll mid = (start + end) / 2;
     return get(node * 2, start, mid, x) + get(node * 2 + 1, mid + 1, end, x);
 }
 
