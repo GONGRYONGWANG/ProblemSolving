@@ -465,13 +465,11 @@ void solve() {
         return;
     }
 
-    vector<bool> DP(total + 1, false);
+    bitset<200001> DP;
     DP[0] = true;
 
     for (int x : arr) {
-        for (int j = total - x; j >= 0; j--) {
-            DP[j + x] = DP[j + x] | DP[j];
-        }
+        DP |= DP << x;
     }
 
     for (int j = (e+1)/2; j <= total; j++) {
