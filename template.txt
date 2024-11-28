@@ -97,7 +97,7 @@ ll fibo(ll n, ll mod = 0) { // 행렬 거듭제곱 이용 피보나치
     return ret[0][0];
 }
 
-vector<int> getPi(const string s) { // KMP 선행 작업
+vector<int> getPi(const string s) { // KMP 선행 작업, pattern->전이함수
     vector<int> pi(s.size(), 0);
     int j = 0;
     for (int i = 1; i < s.size(); i++) {
@@ -112,7 +112,7 @@ vector<int> getPi(const string s) { // KMP 선행 작업
     return pi;
 }
 
-vector<int> kmp(const string& s, const string& t, const vector<int>& pi) { //KMP
+vector<int> kmp(const string& s, const string& t, const vector<int>& pi) { //KMP, kmp(pattern, txt, pi)
     vector<int> result;
     int j = 0;
     for (int i = 0; i < t.size(); i++) {
