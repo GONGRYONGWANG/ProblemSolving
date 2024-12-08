@@ -1054,7 +1054,7 @@ void solve() {
             }
         }
 
-        if (cycle <= 200) cnt[cycle] += n;
+        if (cycle <= 59) cnt[cycle] += n;
         else {
             for (int j = cycle; j <= 2000000; j += cycle) {
                 cnt[j] += n;
@@ -1094,10 +1094,10 @@ void solve() {
         }
 
         ll ret = 0;
-        for (int j = 1; j <= min(q, 200); j++) {
+        for (int j = 1; j <= min(q, 59); j++) {
             if (q % j == 0) ret += cnt[j];
         }
-        if (q > 200) ret += cnt[q];
+        if (q > 59) ret += cnt[q];
 
         cout << ret << endl;
     }
