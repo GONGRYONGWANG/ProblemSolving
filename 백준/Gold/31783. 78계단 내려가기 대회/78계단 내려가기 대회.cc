@@ -344,28 +344,11 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 /////////////////////////////////////////////////////////////////////////////////////
 
 
-ll tree[1200000];
-void update(int node, int start, int end, int x, ll val) {
-    if (x > end || x < start) return;
-    if (start == end) {
-        tree[node] = val;
-        return;
-    }
-    int mid = (start + end) / 2;
-    update(node * 2, start, mid, x, val); update(node * 2 + 1, mid + 1, end, x, val);
-    tree[node] = max(tree[node * 2], tree[node * 2 + 1]);
-}
-ll get(int node, int start, int end, int left, int right) {
-    if (left > end || right < start) return 0;
-    if (left <= start && right >= end) return tree[node];
-    int mid = (start + end) / 2;
-    return max(get(node * 2, start, mid, left, right), get(node * 2 + 1, mid + 1, end, left, right));
-}
-
 void solve() {
     int N;
     cin >> N;
     vector<ll> H(N), A(N), B(N);
+    vector<ll> mx(N, 0);
     for (int i = 0; i < N; i++) {
         cin >> H[i];
         H[i] = -H[i];
@@ -373,13 +356,16 @@ void solve() {
     for (int i = 1; i < N; i++) cin >> A[i];
     for (int i = 1; i < N; i++) cin >> B[i];
 
+    ll ans = 0;
+
     for (int i = 1; i < N; i++) {
-        int r = upper_bound(H.begin(), H.end(), H[i] - B[i]) - H.begin() - 1;
-        ll val = 0;
-        if (r >= 0) val = get(1, 1, N, 1, r + 1) + A[i];
-        update(1, 1, N, i + 1, val);
+        int idx = upper_bound(H.begin(), H.end(), H[i] - B[i]) - H.begin() - 1;
+        idx = min(idx, i - 1);
+        if (idx < 0) mx[i] = mx[i - 1];
+        else mx[i] = max(mx[i - 1], mx[idx] + A[i]);
     }
-    cout << get(1, 1, N, 1, N);
+
+    cout << mx[N - 1];
 
 }
 
