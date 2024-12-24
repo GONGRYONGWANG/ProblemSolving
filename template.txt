@@ -160,6 +160,42 @@ vector<int> kmp(const string& s, const string& t, const vector<int>& pi) { //KMP
     return result;
 }
 
+vector<int> getPi(const vector<int>& pattern) { // 수열용 KMP 선행작업
+    vector<int> pi(pattern.size(), 0);
+    int j = 0;
+    for (int i = 1; i < pattern.size(); i++) {
+        while (j > 0 && pattern[i] != pattern[j]) {
+            j = pi[j - 1];
+        }
+        if (pattern[i] == pattern[j]) {
+            j++;
+            pi[i] = j;
+        }
+    }
+    return pi;
+}
+
+vector<int> kmp(const vector<int>& pattern, const vector<int>& text, const vector<int>& pi) { // 수열용 KMP
+    vector<int> result;
+    int j = 0;
+    for (int i = 0; i < text.size(); i++) {
+        while (j > 0 && text[i] != pattern[j]) {
+            j = pi[j - 1];
+        }
+        if (text[i] == pattern[j]) {
+            if (j == pattern.size() - 1) {
+                result.push_back(i - pattern.size() + 1);
+                j = pi[j];
+            } else {
+                j++;
+            }
+        }
+    }
+    return result;
+}
+
+
+
 string manacher_preprocess(string& s) { // 매내처 선행작업
     string ret = "";
     char tmp = '#';
