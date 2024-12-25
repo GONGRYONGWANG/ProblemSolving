@@ -1039,19 +1039,21 @@ struct TwoSat { // for SCC and TwoSat.
 
     // Only one of them is true
     void add_clause_xor(int i, int j, bool f = true, bool g = true) {
-        if (i < 0) f = !f;
-        if (j < 0) g = !g;
-        i = abs(i); j = abs(j);
-        add_clause_or(i, f, j, g);
-        add_clause_or(i, !f, j, !g);
+        if (i < 0) {
+            add_clause_xor(-i, j, !f, g);
+            return;
+        }
+        if (j < 0) {
+            add_clause_xor(i, -j, f, !g);
+            return;
+        }
+        add_clause_or(i, j, f, g);
+        add_clause_or(i, j, !f, !g);
     }
 
     // Both of them have the same value
     void add_clause_and(int i, int j, bool f = true, bool g = true) {
-        if (i < 0) f = !f;
-        if (j < 0) g = !g;
-        i = abs(i); j = abs(j);
-        add_clause_xor(i, !f, j, g);
+        add_clause_xor(i, j, !f, g);
     }
 
     // Topological sort
@@ -1095,6 +1097,7 @@ struct TwoSat { // for SCC and TwoSat.
 
         return true;
     }
+
 };
 
 //int dx[4] = { -1,0,1,0 }; 
