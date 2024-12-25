@@ -337,8 +337,8 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 
 };
 
-int dx[4] = { -1,0,1,0 }; 
-int dy[4] = { 0,-1,0,1 }; 
+//int dx[4] = { -1,0,1,0 }; 
+//int dy[4] = { 0,-1,0,1 }; 
 //int dx[8] = { -1,-1,-1,0,1,1,1,0 };
 //int dy[8] = { -1,0,1,1,1,0,-1,-1 };
 
@@ -357,6 +357,7 @@ void dfs1(int x, int p) {
 }
 
 ll dfs2(int x, int p, ll pdist) {
+    if (depth[x] <= pdist) return pdist;
     pll mx = { pdist, 0 };
     for (pll& e : E[x]) {
         if (e.first == p) continue;
@@ -365,12 +366,11 @@ ll dfs2(int x, int p, ll pdist) {
         else if (d > mx.second) mx = { mx.first, d };
     }
 
+
     for (pll& e : E[x]) {
         if (e.first == p) continue;
-        if (mx.first == depth[e.first] + e.second && mx.second + e.second <= depth[e.first]) return dfs2(e.first, x, mx.second + e.second);
+        if (depth[e.first] + e.second == mx.first)  return  min(mx.first, dfs2(e.first, x, mx.second + e.second));
     }
-
-    return mx.first;
 
 }
 
@@ -396,17 +396,29 @@ void solve() {
         if (ret.size() > 3) ret.pop_back();
     }
 
+    ll mxdiameter = 0;
+    for (int i = 0; i < N; i++) {
+        pll mx = { 0,0 };
+        for (pll& e : E[i]) {
+            if (depth[e.first] > depth[i]) continue;
+            ll d = depth[e.first] + e.second;
+            if (d > mx.first) mx = { d,mx.first };
+            else if (d > mx.second) mx = { mx.first,d };
+        }
+        mxdiameter = max(mxdiameter, mx.first + mx.second);
+    }
+
     if (ret.size() == 1) {
-        cout << ret.front();
+        cout << mxdiameter;
         return;
     }
 
     if (ret.size() == 2) {
-        cout << ret[0] + ret[1] + L;
+        cout << max(mxdiameter, ret[0] + ret[1] + L);
         return;
     }
 
-    cout << max(2 * L + ret[1] + ret[2], L + ret[0] + ret[1]);
+    cout << max(mxdiameter, max(2 * L + ret[1] + ret[2], L + ret[0] + ret[1]));
 
 }
 
