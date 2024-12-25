@@ -344,19 +344,18 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-set<int>* st[500001];
+set<int> st[500001];
 
 void solve() {
     int N, Q;
     cin >> N >> Q;
     for (int i = 1; i <= N; i++) {
-        st[i] = new set<int>;
         int n;
         cin >> n;
         while (n--) {
             int x;
             cin >> x;
-            st[i]->insert(x);
+            st[i].insert(x);
         }
     }
 
@@ -366,18 +365,18 @@ void solve() {
         if (t == 1) {
             int a, b;
             cin >> a >> b;
-            if (st[a]->size() < st[b]->size()) {
+            if (st[a].size() < st[b].size()) {
                 swap(st[a], st[b]);
             }
-            for (int x : *st[b]) {
-                st[a]->insert(x);
+            for (int x : st[b]) {
+                st[a].insert(x);
             }
-            st[b]->clear();
+            st[b].clear();
         }
         else {
             int a;
             cin >> a;
-            cout << st[a]->size() << endl;
+            cout << st[a].size() << endl;
         }
     }
 
