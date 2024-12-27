@@ -1100,6 +1100,69 @@ struct TwoSat { // for SCC and TwoSat.
 
 };
 
+struct BridgeNArticulation { // 단절점, 단절선 O(V+E)
+    int V; // Number of vertices
+    vector<vector<int>> adj; // Adjacency list
+
+    // Variables for finding bridges and articulation points
+    vector<int> discoveryTime, low;
+    vector<bool> visited;
+    int time;
+    unordered_set<pii, PiiHasher> bridges;
+    unordered_set<int> articulationPoints;
+
+    BridgeNArticulation(int vertices) : V(vertices), adj(vertices), discoveryTime(vertices, -1), low(vertices, -1), visited(vertices, false), time(0) {}
+
+    void addEdge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void dfs(int u, int parent) {
+        visited[u] = true;
+        discoveryTime[u] = low[u] = time++;
+        int children = 0;
+
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                ++children;
+                dfs(v, u);
+
+                // Update low value of u for parent function calls
+                low[u] = min(low[u], low[v]);
+
+                // Check if the edge u-v is a bridge
+                if (low[v] > discoveryTime[u]) {
+                    bridges.insert({ min(u, v), max(u, v) });
+                }
+
+                // Check if u is an articulation point
+                if (parent != -1 && low[v] >= discoveryTime[u]) {
+                    articulationPoints.insert(u);
+                }
+            }
+            else if (v != parent) {
+                // Update low value of u for back edge
+                low[u] = min(low[u], discoveryTime[v]);
+            }
+        }
+
+        // Special case for root of DFS tree
+        if (parent == -1 && children > 1) {
+            articulationPoints.insert(u);
+        }
+    }
+
+    void get() {
+        for (int i = 0; i < V; ++i) {
+            if (!visited[i]) {
+                dfs(i, -1);
+            }
+        }
+    }
+
+};
+
 //int dx[4] = { -1,0,1,0 }; 
 //int dy[4] = { 0,-1,0,1 }; 
 //int dx[8] = { -1,-1,-1,0,0,1,1,1 };
