@@ -348,30 +348,29 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 void solve() {
     int N;
     cin >> N;
-    map<int, int> m;
+    stack<pii> st;
+    st.push({ 0,0 });
     while (N--) {
         int t, x;
         cin >> t >> x;
         if (t == 1) {
-            m[x] += 1;
+            st.push({ x,1 });
         }
         else {
-            if (m.empty()) continue;
-            int thres = max((m.rbegin()->first) - x, 0);
-            if (thres == 0) {
-                m.clear();
-                continue;
+            int thres = max(0, st.top().first - x);
+            int cnt = 0;
+            while (!st.empty() && st.top().first >= thres) {
+                cnt += st.top().second;
+                st.pop();
             }
-            while (!m.empty() && (m.rbegin()->first) > thres) {
-                m[thres] += (m.rbegin()->second);
-                m.erase(m.rbegin()->first);
-            }
+            st.push({ thres,cnt });
         }
     }
 
     ll ans = 0;
-    for (auto it = m.begin(); it != m.end(); it++) {
-        ans += ll(it->first) * ll(it->second);
+    while (!st.empty()) {
+        ans += ll(st.top().first) * ll(st.top().second);
+        st.pop();
     }
     cout << ans;
 
