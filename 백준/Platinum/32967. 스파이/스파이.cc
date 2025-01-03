@@ -113,7 +113,7 @@ void solve() {
     for (int i = 0; i < N; i++) {
         ll s = arr[i][0]; ll e = arr[i][1]; ll d = arr[i][2];
         ll l = s; ll r = e;
-        ans += (los.order_of_key(e) - ros.order_of_key(s))*d;
+        ans += (los.order_of_key(e) - ros.order_of_key(s+1))*d;
         los.insert(s); ros.insert(e);
         auto lit = m.lower_bound(s);
         if(lit!=m.begin()){
@@ -124,7 +124,7 @@ void solve() {
         }
         auto rit = m.lower_bound(e);
 
-        ll sz = 1;
+        ll sz = 0;
 
         while(lit!=rit){
             auto nit = lit;
@@ -136,7 +136,8 @@ void solve() {
             m.erase(lit);
             lit = nit;
         }
-        m[l]={r,sz};
+        ans += sz*d;
+        m[l]={r,sz + 1};
 
     }
 
