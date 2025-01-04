@@ -364,6 +364,10 @@ void solve() {
         cin >> l >> r;
         l = lower_bound(arr.begin(), arr.end(), l) - arr.begin();
         r = upper_bound(arr.begin(), arr.end(), r) - arr.begin() - 1;
+        if (r <= l) {
+            cout << 0 << endl;
+            continue;
+        }
         ll m = (l + r) / 2;
         ll mx = max(psum[r] - psum[l - 1] - (r - l + 1) * arr[l], (r - l + 1) * arr[r] - (psum[r] - psum[l - 1]));
         ll mn = psum[r] - psum[m - 1] - (r - m + 1) * arr[m] + (m - l + 1) * arr[m] - (psum[m] - psum[l - 1]);
