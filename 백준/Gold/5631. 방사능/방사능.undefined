@@ -1,0 +1,37 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Coord {
+    int x, y;
+    friend int distance_between(const Coord &a, const Coord &b) {
+        return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+    }
+};
+
+int main() {
+    cin.tie(nullptr); cout.tie(nullptr);
+    ios::sync_with_stdio(false);
+    int n; cin >> n;
+    for (int tc = 1; n != 0; tc++, cin >> n) {
+        vector<Coord> houses(n);
+        for (Coord& house : houses) cin >> house.x >> house.y;
+        Coord a, b; int q; cin >> a.x >> a.y >> b.x >> b.y >> q;
+        vector<int> distance_to_a(n);
+        vector<int> distance_to_b(n);
+        for (int i = 0; i < n; i++) {
+            distance_to_a[i] = distance_between(houses[i], a);
+            distance_to_b[i] = distance_between(houses[i], b);
+        }
+        ranges::sort(distance_to_a); ranges::sort(distance_to_b);
+        cout<<"Case "<<tc<<":\n";
+        for (int qi = 0; qi < q; qi++) {
+            int ra, rb; cin >> ra >> rb;
+            int answer = max(
+                0L,
+                n - (ranges::upper_bound(distance_to_a, ra * ra) - distance_to_a.begin())
+                  - (ranges::upper_bound(distance_to_b, rb * rb) - distance_to_b.begin())
+            );
+            cout << answer << '\n';
+        }
+    }
+}
