@@ -256,6 +256,103 @@ vector<int> manacher(const vector<int>& seq) { // 수열용 매내처
     return ret;
 }
 
+struct AhoCorasick { // 아호-코라식
+    struct Node {
+        unordered_map<char, int> next; // Transition table
+        int fail = -1;                  // Failure link
+        vector<int> output;            // Stores the indices of patterns that end here
+    };
+
+    vector<Node> trie;
+
+    AhoCorasick() {
+        trie.push_back(Node()); // Root node
+    }
+
+    // Insert a pattern into the trie
+    void insert(const string& pattern, int patternIndex) {
+        int currentNode = 0;
+        for (char ch : pattern) {
+            if (trie[currentNode].next.find(ch) == trie[currentNode].next.end()) {
+                trie[currentNode].next[ch] = trie.size();
+                trie.push_back(Node());
+            }
+            currentNode = trie[currentNode].next[ch];
+        }
+        trie[currentNode].output.push_back(patternIndex);
+    }
+
+    // Build the failure links
+    void build() {
+        queue<int> q;
+
+        // Set the fail link of the root's children to root
+        for (const auto& pair : trie[0].next) {
+            int child = pair.second;
+            trie[child].fail = 0;
+            q.push(child);
+        }
+
+        // Perform BFS to build failure links
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            for (const auto& pair : trie[node].next) {
+                char ch = pair.first;
+                int child = pair.second;
+                int failNode = trie[node].fail;
+
+                // Follow the failure link until we find a match
+                while (failNode != -1 && trie[failNode].next.find(ch) == trie[failNode].next.end()) {
+                    failNode = trie[failNode].fail;
+                }
+
+                if (failNode == -1) {
+                    trie[child].fail = 0;
+                }
+                else {
+                    trie[child].fail = trie[failNode].next[ch];
+                    trie[child].output.insert(trie[child].output.end(),
+                        trie[trie[child].fail].output.begin(),
+                        trie[trie[child].fail].output.end());
+                }
+
+                q.push(child);
+            }
+        }
+    }
+
+    // Search for patterns in a given string and return all matches
+    vector<int> search(const string& text) {
+        vector<int> matches;
+        int currentNode = 0;
+
+        for (int i = 0; i < text.length(); ++i) {
+            char ch = text[i];
+
+            // Follow the transition links, or fail if no match
+            while (currentNode != -1 && trie[currentNode].next.find(ch) == trie[currentNode].next.end()) {
+                currentNode = trie[currentNode].fail;
+            }
+
+            if (currentNode == -1) {
+                currentNode = 0;
+                continue;
+            }
+
+            currentNode = trie[currentNode].next[ch];
+
+            // Collect matched pattern indices
+            for (int patternIndex : trie[currentNode].output) {
+                matches.push_back(patternIndex);
+            }
+        }
+
+        return matches;
+    }
+};
+
 ll gcd(ll a, ll b) {
     if (a < b) swap(a, b);
     while (b != 0) {
