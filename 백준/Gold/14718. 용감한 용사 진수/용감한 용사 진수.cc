@@ -350,33 +350,44 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 
 
 void solve(int tc) {
+
     int N, K;
     cin >> N >> K;
     vector<vector<int>> arr(N);
+    vector<int> B(N);
     for (int i = 0; i < N; i++) {
         int a, b, c;
         cin >> a >> b >> c;
         arr[i] = { a,b,c };
+        B[i] = b;
     }
     sort(arr.begin(), arr.end());
+    sort(B.rbegin(), B.rend());
 
-    int ret = inf;
+    int ans = inf;
+    for (int z = 0; z < N; z++) {
+        int c = arr[z][2];
 
-    for (int x = 0; x < N; x++) {
-        for (int y = 0; y < N; y++) {
-            int b = arr[x][1];
-            int c = arr[y][2];
-            int cnt = 0;
-            for (int i = 0; i < N; i++) {
-                if (arr[i][1] <= b && arr[i][2] <= c) {
-                    cnt += 1;
-                    if (cnt == K) ret = min(ret, b + c + arr[i][0]);
-                }
+        int x = -1; int y = 0;
+
+        pq<int> q;
+
+        while (1) {
+            if (q.size() >= K) {
+                ans = min(ans, c + arr[x][0] + B[y]);
+                y += 1;
+                if (y == N) break;
+                while (!q.empty() && q.top() > B[y]) q.pop();
+            }
+            else {
+                x += 1;
+                if (x == N) break;
+                if (arr[x][2] <= c && arr[x][1] <= B[y]) q.push(arr[x][1]);
             }
         }
     }
 
-    cout << ret;
+    cout << ans;
 
 
 }
