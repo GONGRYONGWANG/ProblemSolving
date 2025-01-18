@@ -347,8 +347,7 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 
 ///////////////////////////////////////////////////////////////
 
-
-pair<int,vector<int>> DP[10001];
+pii DP[501][10001];
 
 void solve(int tc) {
 
@@ -366,35 +365,51 @@ void solve(int tc) {
     };
     sort(arr.begin(), arr.end(), cmp);
 
-    for (int i = 0; i <= C; i++) DP[i] = { 0,{} };
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j <= C; j++) {
+            DP[i][j] = { 0,-1 };
+        }
+    }
 
     for (int i = 0; i < N; i++) {
         int d = arr[i][0]; int s = arr[i][1];
+        for (int j = 0; j <= C; j++) DP[i + 1][j] = DP[i][j];
         for (int j = C - d; j >= 0; j--) {
-            if (DP[j].first + 1 > DP[j + s].first) {
-                DP[j + s] = { DP[j].first + 1, DP[j].second };
-                DP[j + s].second.push_back(arr[i][2]);
-            }
+            if (DP[i][j].first + 1 > DP[i + 1][j + s].first) DP[i + 1][j + s] = { DP[i][j].first + 1, i };
         }
     }
 
     int mx = 0;
     for (int i = 0; i <= C; i++) {
-        mx = max(mx, DP[i].first);
+        mx = max(mx, DP[N][i].first);
     }
 
     int x = 0;
     for (int i = 0; i <= C; i++) {
-        if (DP[i].first == mx) {
+        if (DP[N][i].first == mx) {
             x = i;
             break;
         }
     }
 
-    cout << DP[x].first << endl;
-    for (int ret : DP[x].second) {
-        cout << ret << " ";
+    cout << mx << endl;
+
+    stack<int> ret;
+
+    int idx = N;
+    while (DP[idx][x].second != -1) {
+        ret.push(arr[DP[idx][x].second][2]);
+        int nx = DP[idx][x].second;
+        x -= arr[nx][1];
+        idx = nx;
     }
+
+    while (!ret.empty()) {
+        cout << ret.top() << " ";
+        ret.pop();
+    }
+
+
 
 
 }
