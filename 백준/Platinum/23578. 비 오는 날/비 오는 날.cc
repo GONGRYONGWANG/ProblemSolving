@@ -347,51 +347,40 @@ struct BiMatch { // Hopcroft-Karp O(E*sqrtV)
 
 ///////////////////////////////////////////////////////////////
 
-
 struct cmp {
     bool operator()(pll& a, pll& b) {
         return a.first * (2 * a.second + 1) > b.first * (2 * b.second + 1);
     }
 };
-struct cmp2 {
-    bool operator()(pll& a, pll& b) {
-        return a.second > b.second;
-    }
-};
-
-pq<pll, vector<pll>, cmp2> E;
-pq<pll, vector<pll>, cmp> q[300001];
 
 void solve(int tc) {
     
     int N;
     cin >> N;
-    for (int i = 1; i <= N; i++) {
-        int x;
-        cin >> x;
-        q[i].push({ x,0 });
-        E.push({ i,x });
-    }
 
     ll ans = 0;
-    while (E.size() > 1) {
-        int u, v;
-        u = E.top().first; ans += E.top().second; E.pop();
-        v = E.top().first; ans += E.top().second; E.pop();
-        if (q[u].size() < q[v].size()) swap(q[u], q[v]);
-        q[u].push({ q[u].top().first, q[u].top().second + 1 });
-        q[u].pop();
-        q[v].push({ q[v].top().first, q[v].top().second + 1 });
-        q[v].pop();
-        while (!q[v].empty()) {
-            q[u].push(q[v].top());
-            q[v].pop();
-        }
-        auto [k, n] = q[u].top();
-        E.push({ u, k * (2 * n + 1) });
+    pq<pll, vector<pll>, cmp> q;
+    for (int i = 0; i < N; i++) {
+        int k;
+        cin >> k;
+        q.push({ k,1 });
+        ans += k;
+    }
+
+    if (N == 1) {
+        cout << 0;
+        return;
+    }
+
+    for (int i = 0; i < N - 2; i++) {
+        auto [k, n] = q.top();
+        q.pop();
+        ans += k * (2 * n + 1);
+        q.push({ k,n + 1 });
     }
 
     cout << ans;
+
 
 }
 
