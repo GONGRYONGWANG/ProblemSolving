@@ -374,7 +374,7 @@ void solve(int tc) {
             ans = min(ans, q.front());
             q.pop_front();
         }
-        q = nq;
+        swap(q, nq);
     }
     while (!q.empty()) {
         ans = min(ans, q.front());
