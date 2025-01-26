@@ -373,7 +373,7 @@ void solve(int tc) {
         }
         while (!L.empty() && *LHT.begin() - T[i] < 0) {
             LHT.erase(LHT.find(H[lidx] + T[lidx]));
-            L.erase(H[lidx]);
+            L.erase(L.find(H[lidx]));
             lidx += 1;
         }
         ll ret = *R.rbegin();
