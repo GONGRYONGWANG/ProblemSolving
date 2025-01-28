@@ -65,8 +65,7 @@ ll sz(int x) {
 
 ll dp(int x, int n) {
     if (DP[x][n] != -1) return DP[x][n];
-    ll ret = 0;
-    if (arr[x].second >= n) ret = arr[x].first * n;
+    ll ret = arr[x].first * n;
     for (int nx : E[x]) {
         if (arr[x].second + sz(nx) < n) continue;
         ret = max(ret, max(n - sz(nx), 0ll) * arr[x].first + dp(nx, n - max(n - sz(nx), 0ll)));
@@ -87,10 +86,12 @@ void solve(int tc) {
         for (int n = 0; n <= N; n++) DP[i][n] = -1;
     }
 
-    ll ans = 0;
-    for (int i = 0; i < M; i++) ans = max(ans, dp(i, N));
-    if (ans == 0) cout << -1;
-    else cout << ans;
+    ll ans = -1;
+    for (int i = 0; i < M; i++) {
+        if (sz(i) < N) continue;
+        ans = max(ans, dp(i, N));
+    }
+    cout << ans;
 
 
 }
