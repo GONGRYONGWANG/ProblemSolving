@@ -73,22 +73,13 @@ void solve(int tc) {
         it--;
         m[e] = max(m[e], it->second + c);
         it = m.find(e);
-        while (1) {
-            auto nit = it;
-            nit++;
-            if (nit == m.end()) break;
-            if (nit->second > it->second) break;
-            m.erase(nit);
+        while (next(it) != m.end() && next(it)->second <= it->second) {
+            m.erase(next(it));
         }
-        auto prv = it;
-        prv--;
-        if (prv->second > it->second) m.erase(it);
+        if (prev(it)->second > it->second) m.erase(it);
     }
 
     cout << m.rbegin()->second;
-
-
-
 
 }
 
