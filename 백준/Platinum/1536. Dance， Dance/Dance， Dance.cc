@@ -155,15 +155,18 @@ void solve(int tc) {
         }
     }
 
-    for (int ret = 1; ret <= N; ret++) {
+    int l = 0;
+    int r = N;
+    while (l < r) {
+        int m = (l + r + 1) / 2;
         MF graph(6 * N + 3); // 1~N B , ~2N B1, ~3N B2, ~4N G, ~5N G1, ~6N G2
         int src = 6 * N + 1; int sink = 6 * N + 2;
         for (int i = 1; i <= N; i++) {
-            graph.addEdge(src, i, ret);
-            graph.addEdge(i, i + N, ret);
+            graph.addEdge(src, i, m);
+            graph.addEdge(i, i + N, m);
             graph.addEdge(i, i + 2 * N, K);
-            graph.addEdge(i + 3 * N, sink, ret);
-            graph.addEdge(i + 4 * N, i + 3 * N, ret);
+            graph.addEdge(i + 3 * N, sink, m);
+            graph.addEdge(i + 4 * N, i + 3 * N, m);
             graph.addEdge(i + 5 * N, i + 3 * N, K);
         }
         for (int i = 1; i <= N; i++) {
@@ -172,15 +175,11 @@ void solve(int tc) {
                 else graph.addEdge(i + 2 * N, j + 5 * N, 1);
             }
         }
-
-        if (graph.get(src, sink) != N * ret) {
-            cout << ret - 1;
-            return;
-        }
+        if (graph.get(src, sink) != N * m) r = m - 1;
+        else l = m;
     }
 
-    cout << N;
-
+    cout << l;
 
     
 
