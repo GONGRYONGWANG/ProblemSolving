@@ -50,7 +50,6 @@ const string debug = "output: ";
 
 ///////////////////////////////////////////////////////////////
 
-
 vector<int> E[1001];
 vector<int> rE[1001];
 int cnt[1001];
@@ -108,31 +107,18 @@ void solve(int tc) {
         }
     }
 
-    vector<bool> visited(D + 1, false);
+    bitset<1001> ret;
     for (int i = 0; i < N; i++) {
         int x;
         cin >> x;
-        q.push(x);
-        visited[x] = true;
-    }
-
-    while (!q.empty()) {
-        int x = q.front();
-        q.pop();
-        for (int i = 1; i <= D; i++) {
-            if (adj[x][i] && !visited[i]) {
-                q.push(i);
-                visited[i] = true;
-            }
-        }
+        ret |= adj[x];
     }
 
     for (int i = 1; i <= D; i++) {
-        if (visited[i]) cout << i << " ";
+        if (ret[i]) cout << i << " ";
     }
 
 
-    
 }
 
 
