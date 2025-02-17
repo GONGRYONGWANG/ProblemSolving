@@ -66,7 +66,7 @@ void solve(int tc) {
         m[x + y].second = true;
     }
 
-    int ans = 0;
+    ll ans = 0;
     int psum = 0;
     for (auto it = m.begin(); it != m.end(); it++) {
         pii p = it->second;
