@@ -64,21 +64,16 @@ void solve(int tc) {
     }
     sort(arr.begin(), arr.end());
 
-    for (int i = 0; i <= (N - 1) / 2; i++) {
-        if (arr[i].first == arr[i + N / 2].first) {
+
+    vector<int> ans(N);
+    for (int i = 0; i < N; i++) {
+        if (arr[i].first == arr[(i + N / 2) % N].first) {
             cout << -1;
             return;
         }
+        ans[arr[(i + N / 2) % N].second] = arr[i].first;
     }
 
-    vector<int> ans(N);
-    for (int i = 0; i <= (N - 1) / 2; i++) {
-        swap(arr[i].first, arr[i + N / 2].first);
-        ans[arr[i].second] = arr[i].first;
-    }
-    for (int i = (N + 1) / 2; i < N; i++) {
-        ans[arr[i].second] = arr[i].first;
-    }
     for (int x : ans) cout << x << " ";
 
 }
