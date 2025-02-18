@@ -51,15 +51,15 @@ int dy[4] = { 0,-1,0,1 };
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-pii parent[300][300];
-pii findp(pii p) {
+pair<short,short> parent[300][300];
+pair<short,short> findp(pair<short,short> p) {
     auto [x, y] = p;
     if (parent[x][y] == p) return p;
     return parent[x][y] = findp(parent[x][y]);
 }
 
-int board[300][300];
-int T[300][300];
+short board[300][300];
+short T[300][300];
 bool inq[300][300];
 
 void solve(int tc) {
@@ -69,18 +69,18 @@ void solve(int tc) {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
             cin >> board[i][j];
-            if (board[i][j]) T[i][j] = inf;
+            if (board[i][j]) T[i][j] = 1000;
             else T[i][j] = 0;
             parent[i][j] = { i,j };
         }
     }
 
-    queue<pii> q;
+    queue<pair<short,short>> q;
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < M; j++) {
             if (!board[i][j]) continue;
             for (int dir = 0; dir < 4; dir++) {
-                int nx = i + dx[dir]; int ny = j + dy[dir];
+                short nx = i + dx[dir]; short ny = j + dy[dir];
                 if (!board[nx][ny]) {
                     q.push({ i,j });
                     inq[i][j] = true;
@@ -90,12 +90,12 @@ void solve(int tc) {
         }
     }
 
-    vector<pair<int, vector<pii>>> v;
+    vector<pair<short, vector<pair<short,short>>>> v;
 
     int t = 0;
     while (!q.empty()) {
         t += 1;
-        queue<pii> nq;
+        queue<pair<short,short>> nq;
         while (!q.empty()) {
             auto [x, y] = q.front();
             q.pop();
