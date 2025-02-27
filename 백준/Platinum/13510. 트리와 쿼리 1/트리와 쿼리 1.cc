@@ -55,28 +55,19 @@ ifstream fin; ofstream fout;
 vector<pii> E[100001];
 int depth[100001];
 pii parent[100001];
-vector<int> depthnode[100001];
+
+int sqrtN;
+vector<int> Frag[100001];
+vector<vector<int>> F;
+vector<int> FragParent;
 
 void dfs(int x) {
-    depthnode[depth[x]].push_back(x);
     for (pii& e : E[x]) {
         int nx = e.first;
         if (parent[x].first == nx) continue;
         parent[nx] = { x, e.second };
         depth[nx] = depth[x] + 1;
         dfs(nx);
-    }
-}
-
-
-int sqrtN;
-vector<int> Frag[100001];
-vector<vector<int>> F;
-vector<int> FragParent;
-void makeFrag(int x) {
-    for (pii& e : E[x]) {
-        int nx = e.first;
-        if (parent[x].first == nx) continue;
         for (int d : Frag[nx]) {
             Frag[x].push_back(d);
         }
@@ -119,12 +110,6 @@ void solve(int tc) {
     depth[1] = 0;
     parent[1] = { 0,0 };
     dfs(1);
-
-    for (int dep = N; dep >= 0; dep--) {
-        for (int x : depthnode[dep]) {
-            makeFrag(x);
-        }
-    }
 
     F.push_back(Frag[1]);
     FragParent.push_back(0);
