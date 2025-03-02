@@ -73,21 +73,23 @@ void solve(int tc) {
         int t, l, r;
         cin >> t >> l >> r;
         l -= 1; r -= 1;
+        int lbck = l / 1000; int rbck = r / 1000;
         if (t == 1) {
-            int lbck = l / 1000; int rbck = r / 1000;
             if (lbck == rbck) {
                 for (int i = l; i <= r; i++) {
                     m[lbck][arr[i]] -= 1;
                     arr[i] += 1; bucketsum[lbck] += 1;
-                    arr[i] %= K; 
+                    arr[i] %= K;
                     m[lbck][arr[i]] += 1;
                     if (arr[i] == bucketidx[lbck]) bucketsum[lbck] -= K;
                 }
                 continue;
             }
             for (int i = l; i < (lbck + 1) * 1000; i++) {
+                m[lbck][arr[i]] -= 1;
                 arr[i] += 1; bucketsum[lbck] += 1;
                 arr[i] %= K;
+                m[lbck][arr[i]] += 1;
                 if (arr[i] == bucketidx[lbck]) bucketsum[lbck] -= K;
             }
             for (int bck = lbck + 1; bck < rbck; bck++) {
@@ -104,23 +106,22 @@ void solve(int tc) {
             }
         }
         else {
-            int lbck = l / 1000; int rbck = r / 1000;
             ll ans = 0;
             if (lbck == rbck) {
                 for (int i = l; i <= r; i++) {
-                    ans += (K - bucketidx[lbck]) % K + arr[i];
+                    ans += (arr[i] + K - bucketidx[lbck]) % K;
                 }
                 cout << ans << endl;
                 continue;
             }
             for (int i = l; i < (lbck + 1) * 1000; i++) {
-                ans += (K - bucketidx[lbck]) % K + arr[i];
+                ans += (arr[i] + K - bucketidx[lbck]) % K;
             }
             for (int bck = lbck + 1; bck < rbck; bck++) {
                 ans += bucketsum[bck];
             }
             for (int i = rbck * 1000; i <= r; i++) {
-                ans += (K - bucketidx[rbck]) % K + arr[i];
+                ans += (arr[i] + K - bucketidx[rbck]) % K;
             }
 
             cout << ans << endl;
