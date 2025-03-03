@@ -52,19 +52,26 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+
 ll arr[2000000];
-unordered_map<ll, ll> m[2000];
-ll bucketidx[2000];
-ll bucketsum[2000];
+bool finish[2000000];
+ll total[1415];
+ll idx[1415];
+ll cnt[1415][20001];
+ll sqrtN;
+ll N, K;
 
 void solve(int tc) {
-    ll N, K;
+
     cin >> N >> K;
+    sqrtN = sqrt(N);
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
         arr[i] %= K;
-        bucketsum[i / 1000] += arr[i];
-        m[i / 1000][arr[i]] += 1;
+        total[i / sqrtN] += arr[i];
+        arr[i] = (K - arr[i]) % K;
+        if (arr[i] <= 20000) cnt[i / sqrtN][arr[i]] += 1;
+        else finish[i] = true;
     }
 
     int Q;
@@ -73,60 +80,75 @@ void solve(int tc) {
         int t, l, r;
         cin >> t >> l >> r;
         l -= 1; r -= 1;
-        int lbck = l / 1000; int rbck = r / 1000;
+        int lbck = l / sqrtN; int rbck = r / sqrtN;
         if (t == 1) {
             if (lbck == rbck) {
                 for (int i = l; i <= r; i++) {
-                    m[lbck][arr[i]] -= 1;
-                    arr[i] += 1; bucketsum[lbck] += 1;
-                    arr[i] %= K;
-                    m[lbck][arr[i]] += 1;
-                    if (arr[i] == bucketidx[lbck]) bucketsum[lbck] -= K;
+                    total[lbck] += 1;
+
+                    if(!finish[i]) cnt[lbck][arr[i]] -= 1;
+
+                    arr[i] -= 1;
+                    if (arr[i] == -1) arr[i] = K - 1;
+                    if (arr[i] == idx[lbck]) total[lbck] -= K;
+                    if (arr[i] > 20000) finish[i] = true;
+                    if (!finish[i]) cnt[lbck][arr[i]] += 1;
                 }
                 continue;
             }
-            for (int i = l; i < (lbck + 1) * 1000; i++) {
-                m[lbck][arr[i]] -= 1;
-                arr[i] += 1; bucketsum[lbck] += 1;
-                arr[i] %= K;
-                m[lbck][arr[i]] += 1;
-                if (arr[i] == bucketidx[lbck]) bucketsum[lbck] -= K;
+
+            for (int i = l; i < (lbck + 1) * sqrtN; i++) {
+                total[lbck] += 1;
+
+                if (!finish[i]) cnt[lbck][arr[i]] -= 1;
+
+                arr[i] -= 1;
+                if (arr[i] == -1) arr[i] = K - 1;
+                if (arr[i] == idx[lbck]) total[lbck] -= K;
+                if (arr[i] > 20000) finish[i] = true;
+                if (!finish[i]) cnt[lbck][arr[i]] += 1;
             }
             for (int bck = lbck + 1; bck < rbck; bck++) {
-                bucketsum[bck] += 1000;
-                bucketidx[bck] = (bucketidx[bck] + K - 1) % K;
-                bucketsum[bck] -= K * m[bck][bucketidx[bck]];
+                total[bck] += sqrtN;
+                idx[bck] += 1;
+                if (idx[bck] == K) idx[bck] = 0;
+                total[bck] -= cnt[bck][idx[bck]] * K;
             }
-            for (int i = rbck * 1000; i <= r; i++) {
-                m[rbck][arr[i]] -= 1;
-                arr[i] += 1; bucketsum[rbck] += 1;
-                arr[i] %= K;
-                m[rbck][arr[i]] += 1;
-                if (arr[i] == bucketidx[rbck]) bucketsum[rbck] -= K;
+            for (int i = rbck * sqrtN; i <= r; i++) {
+                total[rbck] += 1;
+
+                if (!finish[i]) cnt[rbck][arr[i]] -= 1;
+
+                arr[i] -= 1;
+                if (arr[i] == -1) arr[i] = K - 1;
+                if (arr[i] == idx[rbck]) total[rbck] -= K;
+                if (arr[i] > 20000) finish[i] = true;
+                if (!finish[i]) cnt[rbck][arr[i]] += 1;
             }
         }
         else {
-            ll ans = 0;
+            ll ret = 0;
             if (lbck == rbck) {
                 for (int i = l; i <= r; i++) {
-                    ans += (arr[i] + K - bucketidx[lbck]) % K;
+                    ret += (K - arr[i] % K + idx[lbck]) % K;
                 }
-                cout << ans << endl;
+                cout << ret << endl;
                 continue;
             }
-            for (int i = l; i < (lbck + 1) * 1000; i++) {
-                ans += (arr[i] + K - bucketidx[lbck]) % K;
-            }
-            for (int bck = lbck + 1; bck < rbck; bck++) {
-                ans += bucketsum[bck];
-            }
-            for (int i = rbck * 1000; i <= r; i++) {
-                ans += (arr[i] + K - bucketidx[rbck]) % K;
-            }
 
-            cout << ans << endl;
+            for (int i = l; i < (lbck + 1) * sqrtN; i++) {
+                ret += (K - arr[i] % K + idx[lbck]) % K;
+            }
+            for (int bck = lbck + 1; bck < rbck; bck++) {   
+                ret += total[bck];
+            }
+            for (int i = rbck * sqrtN; i <= r; i++) {
+                ret += (K - arr[i] % K + idx[rbck]) % K;
+            }
+            cout << ret << endl;
         }
     }
+    
 
 
 
