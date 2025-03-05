@@ -1183,7 +1183,7 @@ struct TwoSat { // for SCC and TwoSat.
     }
 
     // Both of them have the same value
-    void add_clause_and(int i, int j, bool f = true, bool g = true) {
+    void add_clause_xnor(int i, int j, bool f = true, bool g = true) {
         add_clause_xor(i, j, !f, g);
     }
 
