@@ -63,7 +63,7 @@ treeNode mer(treeNode t1, treeNode t2) {
     if (t2.mx == -inf * 2) return t1;
     treeNode ret;
     ret.mx = max(t1.mx, t2.mx);
-    ret.mn = min(t1.mn, t2.mx);
+    ret.mn = min(t1.mn, t2.mn);
     ret.abc_mx = max(max(t1.abc_mx, t2.abc_mx), max(t1.ab_mx - t2.mn, t2.bc_mx - t1.mn));
     ret.ab_mx = max(max(t1.ab_mx, t2.ab_mx), t2.mx - t1.mn);
     ret.bc_mx = max(max(t1.bc_mx, t2.bc_mx), t1.mx - t2.mn);
