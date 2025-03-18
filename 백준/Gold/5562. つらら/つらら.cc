@@ -52,36 +52,26 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+ll DP[100002];
 
 void solve(int tc) {
     
-    int N, L;
+    ll N, L;
     cin >> N >> L;
-    vector<int> arr(N + 2, 0);
-    for (int i = 1; i <= N; i++) cin >> arr[i];
-    set<pll> st;
-    for (int i = 1; i <= N; i++) {
-        if (arr[i] > arr[i - 1] && arr[i] > arr[i + 1]) st.insert({ L - arr[i],i });
+    vector<pll> arr(N);
+    for (int i = 0; i < N; i++) {
+        cin >> arr[i].first;
+        arr[i].second = i + 1;
+    }
+    sort(arr.begin(), arr.end());
+
+    ll ans = 0;
+    for (auto [x, idx] : arr) {
+        DP[idx] = L - x + max(DP[idx - 1], DP[idx + 1]);
+        ans = max(ans, DP[idx]);
     }
 
-    ll ret = 0;
-    while (!st.empty()) {
-        ret = st.begin()->first;
-        int x = st.begin()->second;
-        st.erase(st.begin());
-        arr[x] = 0;
-        if (x - 1 != 0 && arr[x - 1] > arr[x] && arr[x - 1] > arr[x - 2]) {
-            st.insert({ ret + L - arr[x - 1], x - 1 });
-        }
-        if (x + 1 != N + 1 && arr[x + 1] > arr[x] && arr[x + 1] > arr[x + 2]) {
-            st.insert({ ret + L - arr[x + 1],x + 1 });
-        }
-
-    }
-
-    cout << ret;
-
-
+    cout << ans;
 
 
 
