@@ -36,7 +36,7 @@ typedef complex<double> cpx;
 typedef long double ld;
 #define pq priority_queue
 #define endl "\n"
-#define INF 1e18+7
+#define INF ll(1e18+7)
 const int inf = 1e9 + 7;
 const long double pi = 3.14159265358979323846;
 const string debug = "output: ";
@@ -72,18 +72,22 @@ void solve(int tc) {
 
     ll ans = 0;
 
-    multiset<ll> L, R;
+    vector<ll> L(M + 2, INF * 3), R(M + 2, INF * 3);
     for (int i = 0; i <= M + 1; i++) {
+        if (i != 0) L[i] = L[i - 1];
         auto [x, t] = arr[i];
-        R.insert(t + K * x);
+        L[i] = min(L[i], t - K * x);
+    }
+    for (int i = M + 1; i >= 0; i--) {
+        if (i != M + 1) R[i] = R[i + 1];
+        auto [x, t] = arr[i];
+        R[i] = min(R[i], t + K * x);
     }
     for (int i = 0; i <= M; i++) {
         auto [x, t] = arr[i];
-        L.insert(t - K * x);
-        R.erase(R.find(t + K * x));
 
-        ll l = *L.begin();
-        ll r = *R.begin();
+        ll l = L[i];
+        ll r = R[i + 1];
 
         ll p1 = (r - l) / (2 * K);
         ll p2 = p1 + 1;
