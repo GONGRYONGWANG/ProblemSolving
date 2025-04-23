@@ -59,7 +59,7 @@ int DP[200001][3];
 
 void dfs(int x, int p) {
     DP[x][0] = 1;
-    int ext = inf;
+    int ext = 1;
     for (int nx : E[x]) {
         if (nx == p) continue;
         dfs(nx, x);
