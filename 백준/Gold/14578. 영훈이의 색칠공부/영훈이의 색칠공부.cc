@@ -55,32 +55,23 @@ ifstream fin; ofstream fout;
 
 ll mod = 1e9 + 7;
 
-ll DP1[100001], DP2[100001];
-
-ll dp2(int n);
-
-ll dp1(int n) {
-    if (n == 0) return 1;
-    if (DP1[n] != -1) return DP1[n];
-    return DP1[n] = (dp2(n - 1) * (n - 1)) % mod;
-}
-
-ll dp2(int n) {
-    if (n == 0) return 1;
-    if (DP2[n] != -1) return DP2[n];
-    return DP2[n] = (dp1(n - 1) + dp2(n - 1) * (n - 1)) % mod;
-}
 
 void solve(int tc) {
 
     int N;
     cin >> N;
 
-    for (int i = 0; i <= N; i++) {
-        DP1[i] = DP2[i] = -1;
+    
+    ll ret = 0;
+    ll mul = 1;
+    for (int i = N; i >= 0; i--) {
+        if (i % 2) ret -= mul;
+        else ret += mul;
+        ret %= mod;
+        mul = mul * i % mod;
     }
 
-    ll ret = dp1(N);
+    ret = (ret + mod) % mod;
 
     for (int i = 1; i <= N; i++) {
         ret = ret * i % mod;
