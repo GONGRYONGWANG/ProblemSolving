@@ -64,35 +64,27 @@ void solve(int tc) {
 
     ll l = 0;
     ll r = inf;
-    while (r - l >= 3) {
-        ll m1 = (l * 2 + r) / 3;
-        ll m2 = (l + r * 2) / 3;
+    while (l < r) {
+        ll m = (l + r + 1) / 2;
 
-        ll ret1 = INF;
-        ll ret2 = INF;
+        ll mn = 0; ll mx = m;
+
+        bool flag = true;
         for (int i = 0; i < N; i++) {
-            if (a[i] * m1 > x[i]) ret1 = -INF;
-            else ret1 = min(ret1, (x[i] - a[i] * m1) / b[i] + m1);
-            if (a[i] * m2 > x[i]) ret2 = -INF;
-            else ret2 = min(ret2, (x[i] - a[i] * m2) / b[i] + m2);
+            if (x[i] < m * min(a[i], b[i])) {
+                flag = false;
+                break;
+            }
+            if (a[i] * m > x[i] && a[i] > b[i]) mx = min(mx, (x[i] - b[i] * m) / (a[i] - b[i]));
+            if (b[i] * m > x[i] && a[i] < b[i]) mn = max(mn, m - (x[i] - a[i] * m) / (b[i] - a[i]));
         }
 
-        if (ret1 >= ret2) r = m2;
-        else l = m1;
+        if (!flag || mx < mn) r = m - 1;
+        else l = m;
 
     }
 
-    ll ans = 0;
-    for (ll i = l; i <= r; i++) {
-        ll ret = INF;
-        for (int j = 0; j < N; j++) {
-            ret = min(ret, (x[j] - a[j] * i) / b[j] + i);
-        }
-        ans = max(ans, ret);
-    }
-
-    cout << ans;
-
+    cout << l;
 
 
 }
