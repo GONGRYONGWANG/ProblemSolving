@@ -73,18 +73,17 @@ void solve(int tc) {
 
     int sum = total / 4;
 
-    vector<ll> DP(4, 0);
+    vector<ll> DP(3, 0);
     
-    ll psum = 0;
-    for (int i = 0; i < N; i++) {
+    int psum = 0;
+    for (int i = 0; i < N - 1; i++) {
         psum += arr[i];
-        if (psum == sum * 4) DP[3] += DP[2];
         if (psum == sum * 3) DP[2] += DP[1];
         if (psum == sum * 2) DP[1] += DP[0];
         if (psum == sum) DP[0] += 1;
     }
 
-    cout << DP[3];
+    cout << DP[2];
 
 
 
