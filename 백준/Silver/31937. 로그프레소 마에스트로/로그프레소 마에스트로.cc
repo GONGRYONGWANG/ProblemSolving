@@ -55,8 +55,10 @@ ifstream fin; ofstream fout;
 
 
 
+bitset<1001> bs[1001];
+
 void solve(int tc) {
-    
+
     int N, M, K;
     cin >> N >> M >> K;
 
@@ -67,6 +69,12 @@ void solve(int tc) {
         cont[x] = true;
     }
 
+
+    for (int i = 1; i <= N; i++){
+        bs[i][i] = true;
+    }
+
+
     vector<vector<int>> edge(M);
     for (int i = 0; i < M; i++) {
         int t, a, b;
@@ -75,26 +83,21 @@ void solve(int tc) {
     }
     sort(edge.begin(), edge.end());
 
-    for (int i = 1; i <= N; i++) {
-        vector<int> ret(N + 1, 0);
-        ret[i] = 1;
-        for (vector<int>& e : edge) {
-            int u = e[1]; int v = e[2];
-            ret[v] |= ret[u];
-        }
+    for (vector<int>& e : edge) {
+        int u = e[1]; int v = e[2];
+        bs[v] |= bs[u];
+    }
 
+    for (int i = 1; i <= N; i++) {
         bool flag = true;
         for (int j = 1; j <= N; j++) {
-            if (cont[j] != ret[j]) flag = false;
+            if (cont[j] != bs[j][i]) flag = false;
         }
-
         if (flag) {
             cout << i;
             return;
         }
-
     }
-
 
 
 
