@@ -69,11 +69,19 @@ void solve(int tc) {
 
     for (int i = 0; i < N; i++) {
         if (K >= val) {
-            arr.push_back(K - K % val);
-            K %= val;
+            if (K >= val * 9) {
+                arr.push_back(val * 9);
+                K -= val * 9;
+            }
+            else {
+                arr.push_back(K - K % val);
+                K %= val;
+            }
         }
         val /= 10;
     }
+
+    if (K != 0) arr.push_back(K);
 
     cout << arr.size() << endl;
     for (ll x : arr) cout << x << " ";
