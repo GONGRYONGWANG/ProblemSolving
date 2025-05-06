@@ -50,11 +50,13 @@ ifstream fin; ofstream fout;
 //int dy[8] = { -1,0,1,1,1,0,-1,-1 };
 
 ///////////////////////////////////////////////////////////////
+#include <ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
 ///////////////////////////////////////////////////////////////
 
 
-unordered_map<int, vector<int>> E[50001];
-unordered_map<int, int> DP[500001];
+gp_hash_table<int, vector<pii>> E[50001];
+gp_hash_table<int, int> visited[50001];
 
 void solve(int tc) {
 
@@ -63,47 +65,36 @@ void solve(int tc) {
     for (int i = 0; i < M; i++) {
         int u, v, x;
         cin >> u >> v >> x;
-        E[u][x].push_back(v);
-        E[v][x].push_back(u);
+        E[u][x - 1].push_back({ v,x });
+        E[v][x - 1].push_back({ u,x });
+        E[u][x + 1].push_back({ v,x });
+        E[v][x + 1].push_back({ u,x });
     }
 
-    vector<int> ret(N + 1, inf);
+    vector<int> ret(N + 1, -1);
 
     queue<pii> q;
 
-    for (int x = 1; x <= M; x++) {
-        for (int v : E[1][x]) {
-            DP[v][x] = 1;
-            ret[v] = 1;
-            q.push({ v,x });
+    for (int x = 0; x <= M; x++) {
+        for (auto [v, nx] : E[1][x]) {
+            if(visited[v][nx]) continue;
+            visited[v][nx] = 1;
+            q.push({ v,nx });
         }
     }
 
     while (!q.empty()) {
-        int u = q.front().first;
-        int x = q.front().second;
+        auto [u, x] = q.front();
         q.pop();
-        for (int v : E[u][x - 1]) {
-            if (DP[v].count(x - 1)) continue;
-            DP[v][x - 1] = DP[u][x] + 1;
-            ret[v] = min(ret[v], DP[v][x - 1]);
-            q.push({ v,x - 1 });
-        }
-        for (int v : E[u][x + 1]) {
-            if (DP[v].count(x + 1)) continue;
-            DP[v][x + 1] = DP[u][x] + 1;
-            ret[v] = min(ret[v], DP[v][x + 1]);
-            q.push({ v,x + 1 });
+        if (ret[u] == -1) ret[u] = visited[u][x];
+        for (auto [v, nx] : E[u][x]) {
+            if (visited[v][nx]) continue;
+            visited[v][nx] = visited[u][x] + 1;
+            q.push({ v,nx });
         }
     }
 
-    for (int i = 1; i <= N; i++) {
-        if (ret[i] == inf) cout << -1;
-        else cout << ret[i];
-        cout << " ";
-    }
-
-
+    for (int i = 1; i <= N; i++) cout << ret[i] << " ";
 
 
 }
