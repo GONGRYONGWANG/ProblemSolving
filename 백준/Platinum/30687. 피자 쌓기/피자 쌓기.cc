@@ -89,7 +89,7 @@ void solve(int tc) {
         total += arr[i];
     }
 
-    vector<ll> A(N), B(N), C(N);
+    vector<ll> A(N), B(N), C(N), D(N);
     A[0] = 1; C[0] = 1;
     ll psum = 0;
     for (int i = 1; i < N; i++) {
@@ -98,16 +98,18 @@ void solve(int tc) {
         C[i] = F[total] * Finv[psum] % mod * Finv[total - psum] % mod;
     }
 
-    B[N - 1] = 1;
+    B[N - 1] = 1; D[N - 1] = 1;
     psum = 0;
     for (int i = N - 2; i >= 0; i--) {
         psum += arr[i + 1];
         B[i] = B[i + 1] * F[psum] % mod * Finv[arr[i + 1]] % mod * Finv[psum - arr[i + 1]] % mod;
+        if (arr[i] == 0) D[i] = 0;
+        else D[i] = F[psum + arr[i] - 1] * Finv[psum] % mod * Finv[arr[i] - 1] % mod;
     }
 
     ll ans = 0;
     for (int i = 0; i < N; i++) {
-        ans += A[i] * B[i] % mod * C[i] % mod;
+        ans += A[i] * B[i] % mod * C[i] % mod * D[i] % mod;
         ans %= mod;
     }
 
