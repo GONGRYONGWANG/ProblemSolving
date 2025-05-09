@@ -71,7 +71,7 @@ void solve(int tc) {
 
     int ans = 0;
     for (int p : prime) {
-        if ((2000000 - 1) / p + 1 <= (N + 1) / 2) break;
+        if ((2000000 - 1) / p + 1 <= ans) break;
         unordered_map<int, int> cnt;
         for (int x : arr) {
             cnt[x % p] += 1;
