@@ -59,6 +59,12 @@ ll get(int a, int b) {
 }
 
 ll dnq(int s, int e, int l, int r) {
+    l = max(0,l);
+    r = min(r, int(arr.size())-1);
+    if(l==r){
+        l = max(0,l-1);
+        r = min(int(arr.size())-1, r+1);
+    }
     if (e < s) return 0;
     int m = (s + e) / 2;
 
@@ -94,7 +100,12 @@ void solve(int tc) {
         }
         arr.push_back(p);
     }
-
+    
+    if(arr.size()==1){
+        cout<<ans;
+        return;
+    }
+    
     ans = max(ans, dnq(0, arr.size() - 1, 0, arr.size() - 1));
 
     cout << ans;
