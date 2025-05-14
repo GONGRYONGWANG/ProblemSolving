@@ -61,7 +61,7 @@ void dnc(int s, int e, int l, int r, int k) {
 
     if (max(l, m + 1) > r) {
         DP[m][k] = -INF;
-        dnc(s, m - 1, l, max(l, m + 1), k);
+        dnc(s, m - 1, l, r, k);
         dnc(m + 1, e, max(l, m + 1), r, k);
         return;
     }
