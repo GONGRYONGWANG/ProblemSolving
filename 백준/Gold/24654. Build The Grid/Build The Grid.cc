@@ -52,33 +52,25 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-bool board[500][500];
-
 void solve(int tc) {
 
     int N;
     cin >> N;
-    for (int i = 0; i < N; i++) {
-        if (i % 2 == 0) {
-            for (int j = N - 1; j > i; j--) {
-                board[j][i] = true;
-            }
-        }
-        else {
-            for (int j = N - 1; j > i; j--) {
-                board[i][j] = true;
-            }
-        }
-    }
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            if (board[i][j]) cout << "B";
-            else cout << "W";
+            if (j % 2 == 0 && i > j) {
+                cout << 'B';
+                continue;
+            }
+            if (i % 2 && j > i) {
+                cout << 'B';
+                continue;
+            }
+            cout << 'W';
         }
         cout << endl;
     }
-
 
 
 }
