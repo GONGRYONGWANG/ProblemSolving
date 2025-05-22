@@ -57,6 +57,10 @@ void solve(int tc) {
 
     string s;
     cin >> s;
+    if (s == "9") {
+        cout << "11";
+        return;
+    }
 
     int N = s.length();
     string l = s.substr(0, (N + 1) / 2);
@@ -75,12 +79,7 @@ void solve(int tc) {
         else l[i] = '0';
     }
 
-    if (l.front() == '0') {
-        cout << 1;
-        for (int i = 0; i < N - 1; i++) cout << 0;
-        cout << 1;
-        return;
-    }
+    if (l.front() == '0') l = "1" + l;
 
     r = l.substr(0, N / 2);
     reverse(r.begin(), r.end());
