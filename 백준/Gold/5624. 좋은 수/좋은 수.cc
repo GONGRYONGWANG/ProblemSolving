@@ -54,9 +54,10 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 
 
+bool sum[400001];
+
 void solve(int tc) {
 
-    unordered_set<int> st;
     int N;
     cin >> N;
 
@@ -66,13 +67,13 @@ void solve(int tc) {
     for (int i = 0; i < N; i++) {
         cin >> arr[i];
         for (int j = 0; j < i; j++) {
-            if (st.count(arr[i] - arr[j])) {
+            if (sum[arr[i] - arr[j] + 200000]) {
                 ans += 1;
                 break;
             }
         }
         for (int j = 0; j <= i; j++) {
-            st.insert(arr[i] + arr[j]);
+            sum[arr[i] + arr[j] + 200000] = true;
         }
     }
 
