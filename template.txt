@@ -256,6 +256,37 @@ vector<int> manacher(const vector<int>& seq) { // 수열용 매내처
     return ret;
 }
 
+vector<int> build_suffix_array(const string& s) { // Suffix Array (SA)
+    int n = s.size();
+    const int ALPHABET = 256;
+
+    vector<int> sa(n), rank(n), tmp(n), cnt(max(ALPHABET, n));
+
+    for (int i = 0; i < n; i++) {
+        sa[i] = i;
+        rank[i] = s[i];
+    }
+
+    for (int k = 1; k < n; k <<= 1) {
+        auto cmp = [&](int i, int j) {
+            if (rank[i] != rank[j]) return rank[i] < rank[j];
+            int ri = (i + k < n) ? rank[i + k] : -1;
+            int rj = (j + k < n) ? rank[j + k] : -1;
+            return ri < rj;
+        };
+
+        sort(sa.begin(), sa.end(), cmp);
+
+        tmp[sa[0]] = 0;
+        for (int i = 1; i < n; i++)
+            tmp[sa[i]] = tmp[sa[i - 1]] + cmp(sa[i - 1], sa[i]);
+
+        rank = tmp;
+    }
+
+    return sa;
+}
+
 struct AhoCorasick { // 아호-코라식
     struct Node {
         unordered_map<char, int> next; // Transition table
