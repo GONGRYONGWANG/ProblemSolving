@@ -256,7 +256,7 @@ vector<int> manacher(const vector<int>& seq) { // 수열용 매내처
     return ret;
 }
 
-vector<int> build_suffix_array(const string& s) { // Suffix Array (SA)
+vector<int> build_suffix_array(const string& s) { // Suffix Array (SA) O(NlogN)
     int n = s.size();
     const int ALPHABET = 256;
 
