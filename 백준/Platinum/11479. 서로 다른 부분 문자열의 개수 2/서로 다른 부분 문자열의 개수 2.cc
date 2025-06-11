@@ -84,24 +84,24 @@ vector<int> build_suffix_array(const string& s) { // Suffix Array (SA) O(NlogN)
 
 vector<int> build_lcp_array(const string& s, const vector<int>& sa) {
     int n = s.size();
-    vector<int> rank(n), lcp(n - 1);
+    vector<int> rank(n), lcp(n); // 크기를 n으로 하고, lcp[0] = 0으로 둠
 
-    // sa[i]의 순서를 rank[sa[i]] = i로 저장
     for (int i = 0; i < n; i++)
         rank[sa[i]] = i;
 
     int h = 0;
     for (int i = 0; i < n; i++) {
-        if (rank[i] == 0) continue; // 첫 번째 접미사는 비교할 이전 접미사가 없음
-        int j = sa[rank[i] - 1];
+        if (rank[i] == 0) {
+            lcp[0] = 0; // 첫 위치는 비교할 이전 접미사가 없음
+            continue;
+        }
 
-        // s[i+h]와 s[j+h]가 같은 동안 h를 증가
+        int j = sa[rank[i] - 1];
         while (i + h < n && j + h < n && s[i + h] == s[j + h])
             h++;
 
-        lcp[rank[i] - 1] = h;
-
-        if (h > 0) h--; // 다음 비교를 위해 h 감소 (최적화)
+        lcp[rank[i]] = h;
+        if (h > 0) h--;
     }
 
     return lcp;
@@ -116,10 +116,9 @@ void solve(int tc) {
     vector<int> SA = build_suffix_array(s);
     vector<int> LCP = build_lcp_array(s, SA);
 
-    
-    ll ans = s.length() - SA[0];
-    for (int i = 1; i < s.length(); i++) {
-        ans += s.length() - SA[i] - LCP[i-1];
+    ll ans = 0;
+    for (int i = 0; i < s.length(); i++) {
+        ans += s.length() - SA[i] - LCP[i];
     }
 
     cout << ans;
