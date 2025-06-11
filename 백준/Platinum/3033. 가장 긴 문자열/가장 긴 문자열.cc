@@ -4,6 +4,7 @@
 #include<cstdio>
 #include<string>
 #include<vector>
+#include<array>
 #include<utility>
 #include<list>
 #include<queue>
@@ -36,7 +37,7 @@ typedef complex<double> cpx;
 typedef long double ld;
 #define pq priority_queue
 #define endl "\n"
-#define INF 1e18+7
+#define INF ll(4e18)
 const int inf = 1e9 + 7;
 const long double pi = 3.14159265358979323846;
 const string debug = "output: ";
@@ -50,81 +51,83 @@ ifstream fin; ofstream fout;
 //int dy[8] = { -1,0,1,1,1,0,-1,-1 };
 
 ///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
+vector<int> build_suffix_array(const string& s) { // Suffix Array (SA) O(NlogN)
+    int n = s.size();
+    const int ALPHABET = 256;
 
-int pow26mod1[200000];
-int pow26mod2[200000];
-int mod1 = 814841;
-int mod2 = 592351;
+    vector<int> sa(n), rank(n), tmp(n), cnt(max(ALPHABET, n));
+
+    for (int i = 0; i < n; i++) {
+        sa[i] = i;
+        rank[i] = s[i];
+    }
+
+    for (int k = 1; k < n; k <<= 1) {
+        auto cmp = [&](int i, int j) {
+            if (rank[i] != rank[j]) return rank[i] < rank[j];
+            int ri = (i + k < n) ? rank[i + k] : -1;
+            int rj = (j + k < n) ? rank[j + k] : -1;
+            return ri < rj;
+        };
+
+        sort(sa.begin(), sa.end(), cmp);
+
+        tmp[sa[0]] = 0;
+        for (int i = 1; i < n; i++)
+            tmp[sa[i]] = tmp[sa[i - 1]] + cmp(sa[i - 1], sa[i]);
+
+        rank = tmp;
+    }
+
+    return sa;
+}
+
+vector<int> build_lcp_array(const string& s, const vector<int>& sa) {
+    int n = s.size();
+    vector<int> rank(n), lcp(n); // 크기를 n으로 하고, lcp[0] = 0으로 둠
+
+    for (int i = 0; i < n; i++)
+        rank[sa[i]] = i;
+
+    int h = 0;
+    for (int i = 0; i < n; i++) {
+        if (rank[i] == 0) {
+            lcp[0] = 0; // 첫 위치는 비교할 이전 접미사가 없음
+            continue;
+        }
+
+        int j = sa[rank[i] - 1];
+        while (i + h < n && j + h < n && s[i + h] == s[j + h])
+            h++;
+
+        lcp[rank[i]] = h;
+        if (h > 0) h--;
+    }
+
+    return lcp;
+}
+
+///////////////////////////////////////////////////////////////
 
 void solve(int tc) {
 
     int N;
     cin >> N;
+    string s;
+    cin >> s;
+    vector<int> SA = build_suffix_array(s);
+    vector<int> LCP = build_lcp_array(s, SA);
     
-    pow26mod1[0] = pow26mod2[0] = 1;
-    for (int i = 1; i < N; i++) {
-        pow26mod1[i] = pow26mod1[i - 1] * 26 % mod1;
-        pow26mod2[i] = pow26mod2[i - 1] * 26 % mod2;
-    }
+    int mx = 0;
+    for (int x : LCP) mx = max(mx, x);
 
-    vector<int> arr(N);
-    for (int i = 0; i < N; i++) {
-        char x;
-        cin >> x;
-        arr[i] = x - 'a';
-    }
-
-    int l = 0;
-    int r = N;
-    while (l < r) {
-        int m = (l + r + 1) / 2;
-
-        unordered_map<int, vector<int>> table;
-
-        int h1 = 0;
-        int h2 = 0;
-        for (int i = 0; i < m; i++) {
-            h1 = (h1 * 26 + arr[i]) % mod1;
-            h2 = (h2 * 26 + arr[i]) % mod2;
-        }
-        table[h1].push_back(h2);
-
-        bool flag = false;
-        for (int i = m; i < N; i++) {
-            h1 += mod1 - arr[i - m] * pow26mod1[m - 1] % mod1;
-            h1 %= mod1;
-            h1 = (h1 * 26 + arr[i]) % mod1;
-            h2 += mod2 - arr[i - m] * pow26mod2[m - 1] % mod2;
-            h2 %= mod2;
-            h2 = (h2 * 26 + arr[i]) % mod2;
-
-            if (table.count(h1)) {
-                for (int x : table[h1]) {
-                    if (x == h2) flag = true;
-                }
-            }
-
-            if (flag) break;
-
-            table[h1].push_back(h2);
-        }
-
-        if (flag) l = m;
-        else r = m - 1;
-
-
-    }
-
-
-    cout << l;
-
+    cout << mx;
 
 
 
 
 }
-
+    
 
 
 
