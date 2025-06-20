@@ -64,36 +64,9 @@ int findp(int x) {
     return parent[x] = findp(parent[x]);
 }
 
-ll tree[400000];
 
-void lazyProp(int node, int start, int end) {
-    if (start == end) return;
-    tree[node * 2] += tree[node];
-    tree[node * 2 + 1] += tree[node];
-    tree[node] = 0;
-}
-void update(int node, int start, int end, int left, int right, ll val) {
-    lazyProp(node, start, end);
-    if (left > end || right < start) return;
-    if (left <= start && right >= end) {
-        tree[node] += val;
-        lazyProp(node, start, end);
-        return;
-    }
-    int mid = (start + end) / 2;
-    update(node * 2, start, mid, left, right, val);
-    update(node * 2 + 1, mid + 1, end, left, right, val);
-}
-
-ll get(int node, int start, int end, int target) {
-    lazyProp(node, start, end);
-    if (target > end || target < start) return 0;
-    if (start == end) return tree[node];
-    int mid = (start + end) / 2;
-    return get(node * 2, start, mid, target) + get(node * 2 + 1, mid + 1, end, target);
-}
-
-ll arr[100001];
+ll A[100002];
+ll B[100001];
 
 void solve(int tc) {
 
@@ -144,20 +117,21 @@ void solve(int tc) {
             parent[y] = x;
         }
         else {
-            arr[x] -= y;
+            B[x] -= y;
             x = findp(x);
-            update(1, 1, N, idx[x], idx[x] + sz[x] - 1, y / sz[x]);
+            A[idx[x]] += y / sz[x];
+            A[idx[x] + sz[x]] -= y / sz[x];
         }
     }
 
-    for (int i = 1; i <= N; i++) {
-        arr[i] += get(1, 1, N, idx[i]);
-    }
+    for (int i = 1; i <= N; i++) A[i] += A[i - 1];
+    for (int i = 1; i <= N; i++) B[i] += A[idx[i]];
+
 
     vector<tuple<ll,ll,ll>> ret;
     for (int i = 2; i <= N; i++) {
-        if (arr[i] == 0) continue;
-        ret.push_back({ i,1,arr[i] });
+        if (B[i]== 0) continue;
+        ret.push_back({ i,1,B[i] });
     }
 
     cout << ret.size() << endl;
