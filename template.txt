@@ -1224,6 +1224,15 @@ struct TwoSat { // for SCC and TwoSat.
         add_edge(j + (g ? n : 0), i + (f ? 0 : n));
     }
 
+    // if i then j
+    void add_clause_then(int i, int j, bool f = true, bool g = true) {
+        if (i < 0) f = !f;
+        if (j < 0) g = !g;
+        i = abs(i); j = abs(j);
+        add_edge(i + (f ? 0 : n), j + (g ? 0 : n));
+        add_edge(j + (g ? n : 0), i + (f ? n : 0));
+    }
+
     // Only one of them is true
     void add_clause_xor(int i, int j, bool f = true, bool g = true) {
         if (i < 0) {
