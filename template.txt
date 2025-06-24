@@ -515,6 +515,17 @@ vector<pair<int, int>> convexHull(vector<pair<int, int>> points) { // 컨벡스 
     return lower;
 }
 
+long long doubledPolygonArea(const vector<pair<int, int>>& polygon) { // polygon에 convexhull 넣기
+    long long area2 = 0;
+    int n = polygon.size();
+    for (int i = 0; i < n; ++i) {
+        const auto& [x1, y1] = polygon[i];
+        const auto& [x2, y2] = polygon[(i + 1) % n];
+        area2 += 1LL * x1 * y2 - 1LL * x2 * y1;
+    }
+    return abs(area2); // 실제 넓이의 2배
+}
+
 bool intersect(pll A, pll B, pll C, pll D) { // 선분 교차 판정 A-B , C-D
     if (A > B) swap(A, B);
     if (C > D) swap(C, D);
