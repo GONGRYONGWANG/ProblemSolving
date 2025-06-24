@@ -54,8 +54,17 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
+
 pq<ll> q[4]; 
 ll arr[4]; 
+
+bool cmp(pll a, pll b) {
+    __int128 l = 1;
+    __int128 r = 1;
+    l = l * a.first * b.second;
+    r = r * b.first * a.second;
+    return l > r;
+}
 
 void solve(int tc) {
     
@@ -73,17 +82,13 @@ void solve(int tc) {
         q[t - 'A'].push(u);
     }
 
-    while (K--) {
 
-        __int128 total = 1; //__int128
-        for (int i = 0; i < 4; i++) total *= arr[i];
+    while (K--) {
 
         int idx = 0;
 
         for (int i = 1; i < 4; i++) {
-            if (total / arr[i] * (arr[i] + q[i].top()) > total / arr[idx] * (arr[idx] + q[idx].top())) {
-                idx = i;
-            }
+            if (cmp(make_pair(q[i].top(), arr[i]), make_pair(q[idx].top(), arr[idx]))) idx = i;
         }
 
         cout << char('A' + idx) << " " << q[idx].top() << endl;
@@ -92,11 +97,6 @@ void solve(int tc) {
         q[idx].pop();
 
     }
-
-
-
-
-
 
 
 
