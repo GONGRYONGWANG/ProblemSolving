@@ -55,7 +55,7 @@ ifstream fin; ofstream fout;
 ///////////////////////////////////////////////////////////////
 
 
-bool visited[200000];
+int nx[400000][18];
 
 void solve(int tc) {
     
@@ -81,6 +81,7 @@ void solve(int tc) {
     while (q.size() >= 2 && q.back().second - M >= q.front().second) q.pop_front();
 
     N = q.size();
+
     for (int i = 0; i < N - 1; i++) {
         if (q[i].second < q[i + 1].first) {
             cout << -1;
@@ -101,33 +102,32 @@ void solve(int tc) {
         arr.push_back({ arr[i].first + M,arr[i].second + M });
     }
 
-
-    int x = 0;
-    while (1) {
-        if (visited[x]) break;
-        visited[x] = true;
-        x = prev(lower_bound(arr.begin(), arr.end(), make_pair(arr[x].second + 1, 0))) - arr.begin();
-        if (x >= N) x -= N;
+    int idx = 0;
+    for (int i = 0; i < 2 * N; i++) {
+        while (idx != 2 * N && arr[i].second >= arr[idx].first) idx += 1;
+        nx[i][0] = idx - 1;
     }
 
-    int ans = 1;
+    for (int j = 1; j < 18; j++) {
+        for (int i = 0; i < 2 * N; i++) {
+            nx[i][j] = nx[nx[i][j - 1]][j - 1];
+        }
+    }
 
-    int cur = x;
-
-    cur = prev(lower_bound(arr.begin(), arr.end(), make_pair(arr[x].second + 1, 0))) - arr.begin();
-    if (cur >= N) cur -= N;
-
-    while (cur != x) {
-        cur = prev(lower_bound(arr.begin(), arr.end(), make_pair(arr[cur].second + 1, 0))) - arr.begin();
-        if (cur >= N) cur -= N;
-        ans += 1;
+    int ans = inf;
+    for (int i = 0; i < N; i++) {
+        int ret = 2;
+        int x = i;
+        for (int j = 17; j >= 0; j--) {
+            if (arr[nx[x][j]].second < arr[i].first + M) {
+                x = nx[x][j];
+                ret += (1 << j);
+            }
+        }
+        ans = min(ans, ret);
     }
 
     cout << ans;
-
-
-
-
 
 }
     
