@@ -66,32 +66,19 @@ struct DequeHasher {
     }
 };
 
-bool coordinatecmp(pll& a, pll& b) { // 각도정렬
-    auto quadrant = [](pll p) {
-        ll dx = p.first;
-        ll dy = p.second;
-        if (dy > 0 && dx > 0) return 0; // 1사분면
-        if (dy > 0 && dx < 0) return 3; // 4사분면
-        if (dy < 0 && dx < 0) return 2; // 3사분면
-        if (dy < 0 && dx > 0) return 1; // 2사분면
-        if (dy == 0) {
-            if (dx > 0) return 0;
-            else return 2;
-        }
-        if (dx == 0) {
-            if (dy > 0) return 3;
-            else return 1;
-        }
+bool coordinatecmp(pll a, pll b) { // 각도 정렬
+    // 1. 사분면 비교 (y > 0 이면 위쪽, y == 0 이면 x > 0 이면 오른쪽)
+    auto half = [](pair<long long, long long> p) {
+        if (p.second > 0) return 1;
+        if (p.second < 0) return 0;
+        return p.first > 0 ? 1 : 0;
     };
-    if (quadrant(a) != quadrant(b)) {
-        return quadrant(a) < quadrant(b);
-    }
-    if (quadrant(a) == 0 || quadrant(a) == 2) {
-        return abs(a.second * b.first) > abs(a.first * b.second);
-    }
-    if (quadrant(a) == 1 || quadrant(a) == 3) {
-        return abs(a.second * b.first) < abs(a.first * b.second);
-    }
+
+    int ha = half(a), hb = half(b);
+    if (ha != hb) return ha > hb;
+
+    // 2. 같은 반평면이면 cross product 비교
+    return a.first * b.second - a.second * b.first > 0;
 }
 
 vector<vector<ll>> matmul( const vector<vector<ll>>& a, const vector<vector<ll>>& b, ll mod = 0) { // 행렬 곱
