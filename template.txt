@@ -502,6 +502,42 @@ vector<pair<int, int>> convexHull(vector<pair<int, int>> points) { // 컨벡스 
     return lower;
 }
 
+pair<int, int> rotatingCalipers(const vector<pair<int, int>>& hull) { // 가장 먼 두 점 
+    int n = hull.size();
+    if (n == 1) return { 0, 0 };
+    if (n == 2) return { 0, 1 };
+
+    int max_i = 0, max_j = 0;
+    long long maxDistSq = 0;
+    int j = 1;
+
+    for (int i = 0; i < n; ++i) {
+        int ni = (i + 1) % n;
+        while (true) {
+            int nj = (j + 1) % n;
+
+            // 외적 비교
+            long long cross = 1LL * (hull[ni].first - hull[i].first) * (hull[nj].second - hull[j].second) -
+                1LL * (hull[ni].second - hull[i].second) * (hull[nj].first - hull[j].first);
+
+            if (cross > 0) j = nj;
+            else break;
+        }
+
+        long long dx = 1LL * hull[i].first - hull[j].first;
+        long long dy = 1LL * hull[i].second - hull[j].second;
+        long long distSq = dx * dx + dy * dy;
+
+        if (distSq > maxDistSq) {
+            maxDistSq = distSq;
+            max_i = i;
+            max_j = j;
+        }
+    }
+
+    return { max_i, max_j };
+}
+
 long long doubledPolygonArea(const vector<pair<int, int>>& polygon) { // polygon에 convexhull 넣기
     long long area2 = 0;
     int n = polygon.size();
