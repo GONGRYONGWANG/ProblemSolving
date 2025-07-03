@@ -562,6 +562,9 @@ bool intersect(pll A, pll B, pll C, pll D) { // 선분 교차 판정 A-B , C-D
     return l1 <= 0 && l2 <= 0;
 }
 
+bool isredundant(pll& a, pll& b, pll& c) { // CHT에서 가운데 라인이 무의미 한지 확인.
+    return (b.second - a.second) * (b.first - c.first) >= (c.second - b.second) * (a.first - b.first);
+}
 
 struct MF { // Dinic O(V^2*E)
     struct Edge {
