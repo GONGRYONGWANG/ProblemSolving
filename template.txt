@@ -566,7 +566,7 @@ bool isredundant(pll& a, pll& b, pll& c) { // CHT에서 가운데 라인이 무�
     return (b.second - a.second) * (b.first - c.first) >= (c.second - b.second) * (a.first - b.first);
 }
 
-struct MF { // Dinic O(V^2*E)
+struct MF { // Dinic 
     struct Edge {
         int to, rev;
         long long flow, cap;
