@@ -1346,67 +1346,74 @@ struct TwoSat { // for SCC and TwoSat.
 
 };
 
-struct BridgeNArticulation { // 단절점, 단절선 O(V+E)
-    int V; // Number of vertices
-    vector<vector<int>> adj; // Adjacency list
+struct BridgeNArticulation { //단절점, 단절선 O(V+E)
+    int V;
+    vector<vector<pair<int, int>>> adj; // {neighbor, edge_id}
 
-    // Variables for finding bridges and articulation points
     vector<int> discoveryTime, low;
     vector<bool> visited;
     int time;
-    unordered_set<pii, PiiHasher> bridges;
-    unordered_set<int> articulationPoints;
 
-    BridgeNArticulation(int vertices) : V(vertices), adj(vertices), discoveryTime(vertices, -1), low(vertices, -1), visited(vertices, false), time(0) {}
+    vector<bool> isBridge;            // edge_id -> true if it's a bridge
+    vector<bool> isArticulationPoint; // node -> true if it's an articulation point
+    vector<pair<int, int>> edges;     // edge_id -> (u, v) 저장
+
+    int edgeCount = 0;
+
+    BridgeNArticulation(int vertices)
+        : V(vertices),
+        adj(vertices),
+        discoveryTime(vertices, -1),
+        low(vertices, -1),
+        visited(vertices, false),
+        time(0),
+        isArticulationPoint(vertices, false) {}
 
     void addEdge(int u, int v) {
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        adj[u].emplace_back(v, edgeCount);
+        adj[v].emplace_back(u, edgeCount);
+        edges.emplace_back(u, v);
+        ++edgeCount;
     }
 
-    void dfs(int u, int parent) {
+    void dfs(int u, int parent, int parentEdgeId) {
         visited[u] = true;
         discoveryTime[u] = low[u] = time++;
         int children = 0;
 
-        for (int v : adj[u]) {
+        for (auto [v, edgeId] : adj[u]) {
             if (!visited[v]) {
                 ++children;
-                dfs(v, u);
+                dfs(v, u, edgeId);
 
-                // Update low value of u for parent function calls
                 low[u] = min(low[u], low[v]);
 
-                // Check if the edge u-v is a bridge
                 if (low[v] > discoveryTime[u]) {
-                    bridges.insert({ min(u, v), max(u, v) });
+                    isBridge[edgeId] = true;
                 }
 
-                // Check if u is an articulation point
                 if (parent != -1 && low[v] >= discoveryTime[u]) {
-                    articulationPoints.insert(u);
+                    isArticulationPoint[u] = true;
                 }
             }
-            else if (v != parent) {
-                // Update low value of u for back edge
+            else if (edgeId != parentEdgeId) {
                 low[u] = min(low[u], discoveryTime[v]);
             }
         }
 
-        // Special case for root of DFS tree
         if (parent == -1 && children > 1) {
-            articulationPoints.insert(u);
+            isArticulationPoint[u] = true;
         }
     }
 
     void get() {
+        isBridge.assign(edgeCount, false);
         for (int i = 0; i < V; ++i) {
             if (!visited[i]) {
-                dfs(i, -1);
+                dfs(i, -1, -1);
             }
         }
     }
-
 };
 
 //int dx[4] = { -1,0,1,0 }; 
