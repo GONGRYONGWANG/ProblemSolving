@@ -1,25 +1,34 @@
+// template: https://github.com/GONGRYONGWANG/ProblemSolving/blob/main/template.txt
 #include<iostream>
 #include<iomanip>
 #include<cstdio>
 #include<string>
+#include<cctype>
 #include<vector>
+#include<array>
 #include<utility>
 #include<list>
 #include<queue>
 #include<stack>
 #include<deque>
+#include<tuple>
 #include<set>
 #include<unordered_set>
 #include<map>
 #include<unordered_map>
 #include<cmath>
 #include<algorithm>
+#include<bitset>
 #include<cstdlib>
-#include<ctime> 
+#include<ctime> // srand(time(0))
+#include<regex> // 정규표현식
 #include<random> // rand
-#include<complex> // complex
+#include<complex> // complex number
 #include<numeric>
-#include<regex>
+#include<cassert>
+#include <climits>
+#include <immintrin.h> // AVX, AVX2, AVX-512 // #pragma GCC optimize ("O3,unroll-loops") //#pragma GCC target ("avx,avx2,fma")
+#include<chrono>
 using namespace std;
 typedef long long ll;
 typedef pair<int, int> pii;
@@ -27,47 +36,82 @@ typedef pair<ll, ll> pll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
 typedef complex<double> cpx;
+typedef long double ld;
 #define pq priority_queue
 #define endl "\n"
-int dx[4] = { 1,-1,0,0 };
-int dy[4] = { 0,0,1,-1 };
-//int dx[8] = { 1,1,1,-1,-1,-1,0,0 };
-//int dy[8] = { 1,0,-1,1,0,-1,1,-1 };
-const double pi = 3.14159265358979323846;
-#define INF 1e18+7;
+#define INF ll(2e18)
+const int inf = 1000000007;
+const long double pi = 3.14159265358979323846;
+const string debug = "output: ";
+#define all(x) (x).begin(), (x).end()
+#include<fstream>
+ifstream fin; ofstream fout;
 
 
+//int dx[4] = { 1,0,-1,0 };
+//int dy[4] = { 0,1,0,-1 };
+//int dx[8] = { -1,-1,-1,0,1,1,1,0 };
+//int dy[8] = { -1,0,1,1,1,0,-1,-1 };
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 
 
-int N;
-ll arr[2000];
-vector<ll> h;
-ll DP[2000][2000][2];
-ll dp(int n, int x, bool dir) {
-    if (x == N || x==-1) return INF;
-    if (n == N) return 0;
-    if (DP[n][x][dir] != -1) return DP[n][x][dir];
-
-    return DP[n][x][dir] = min(abs(arr[n] - h[x]) + dp(n + 1, x, dir), dp(n, x + (dir ? 1 : -1), dir));
-    
+vector<ll> slope_trick(const vector<ll>& v) {
+    priority_queue<ll> q;
+    vector<ll> opt(v.size());
+    for (int i = 0; i < v.size(); i++) {
+        if (q.empty() || q.top() <= v[i]) q.push(v[i]);
+        else {
+            q.pop();
+            q.push(v[i]);
+            q.push(v[i]);
+        }
+        opt[i] = q.top();
+    }
+    for (int i = v.size() - 2; i >= 0; i--) opt[i] = min(opt[i], opt[i + 1]);
+    return opt;
 }
 
-int main() {
-    ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
 
+void solve(int tc) {
+    
+    int N;
     cin >> N;
-    h.resize(N);
+
+
+    vector<ll> arr(N);
+    for (int i = 0; i < N; i++) cin >> arr[i];
+
+    ll ret1 = 0;
+    vector<ll> opt = slope_trick(arr);
     for (int i = 0; i < N; i++) {
-        cin >> arr[i];
-        h[i] = arr[i];
-        for (int j = 0; j < N; j++) {
-            DP[i][j][0] = DP[i][j][1] = -1;
-        }
+        ret1 += abs(opt[i] - arr[i]);
     }
-    sort(h.begin(), h.end());
 
-    cout << min(dp(0, 0, 1), dp(0, N-1, 0));
+    reverse(arr.begin(), arr.end());
+    opt = slope_trick(arr);
+    ll ret2 = 0;
+    for (int i = 0; i < N; i++) {
+        ret2 += abs(opt[i] - arr[i]);
+    }
 
+    cout << min(ret1, ret2);
+
+
+
+
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false); cin.tie(NULL);
+    int T = 1;
+    //cin >> T;
+    //fin.open("input.txt"); fout.open("output.txt");
+    for (int tc = 1; tc <= T; tc++) {
+        solve(tc);
+    }
 
     return 0;
 }
