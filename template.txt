@@ -571,7 +571,7 @@ bool isredundant(pll& a, pll& b, pll& c) { // CHT에서 가운데 라인이 무�
     return (b.second - a.second) * (b.first - c.first) >= (c.second - b.second) * (a.first - b.first);
 }
 
-vector<ll> slope_trick(const vector<ll>& v) { // A(i)=<A(i+1). 
+vector<ll> slope_trick(const vector<ll>& v) { // A(i)=<A(i+1). 역순으로 사전순 최소?
     priority_queue<ll> q;
     vector<ll> opt(v.size());
     for (int i = 0; i < v.size(); i++) {
