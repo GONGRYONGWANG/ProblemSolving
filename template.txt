@@ -571,6 +571,22 @@ bool isredundant(pll& a, pll& b, pll& c) { // CHT에서 가운데 라인이 무�
     return (b.second - a.second) * (b.first - c.first) >= (c.second - b.second) * (a.first - b.first);
 }
 
+vector<ll> slope_trick(const vector<ll>& v) { // A(i)=<A(i+1)
+    priority_queue<ll> q;
+    vector<ll> opt(v.size());
+    for (int i = 0; i < v.size(); i++) {
+        if (q.empty() || q.top() <= v[i]) q.push(v[i]);
+        else {
+            q.pop();
+            q.push(v[i]);
+            q.push(v[i]);
+        }
+        opt[i] = q.top();
+    }
+    for (int i = v.size() - 2; i >= 0; i--) opt[i] = min(opt[i], opt[i + 1]);
+    return opt;
+}
+
 struct MF { // Dinic 
     struct Edge {
         int to, rev;
