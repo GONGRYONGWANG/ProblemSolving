@@ -108,13 +108,12 @@ void solve(int tc) {
         os.insert(arr[i]);
     }
 
-    ll ret = F[N];
+    ll ret = 1;
 
     for(int i =0; i<N;i++ ){
         ll x  =arr[i];
-        ll cnt =  os.size() - os.order_of_key(x+1);
 
-        ret -= cnt*F[N-1-i]%mod;
+        ret += F[N-1-i] * os.order_of_key(x)%mod;
         ret %=mod;
 
         os.erase(x);
@@ -122,7 +121,7 @@ void solve(int tc) {
 
 
 
-    cout<< (ret+mod)%mod;
+    cout<< ret;
 
 
 
