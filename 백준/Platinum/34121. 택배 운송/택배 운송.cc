@@ -150,7 +150,7 @@ void solve(int tc) {
             cin >> a >> b;
             l = lr[a].first - b; r = lr[a].second + b;
             l = max(l, 0ll);  r = min(r, lr[1].first);
-            if (r > l) {
+            if (l < r) {
                 m[l] = 0; m[r] = 0;
             }
         }
@@ -170,7 +170,7 @@ void solve(int tc) {
 
 
     for (int i = 0; i < Q; i++) {
-        if (m.rbegin()->first != lr[1].first || m.begin()->first != 0) {
+        if (m.empty() || m.rbegin()->first != lr[1].first || m.begin()->first != 0) {
             cout << "NO" << endl;
             continue;
         }
@@ -180,9 +180,6 @@ void solve(int tc) {
             l = m[l]; r = m[r] - 1;
             if (t == 1) update(1, 1, n - 1, l, r, 1);
             else update(1, 1, n - 1, l, r, -1);
-
-
-
         }
 
         if (tree[1] == 0) cout << "NO";
