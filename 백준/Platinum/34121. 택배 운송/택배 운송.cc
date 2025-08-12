@@ -70,8 +70,8 @@ void dfs(int x) {
 }
 
 
-ll tree[200001];
-ll lazy[200001];
+int tree[1600000];
+int lazy[1600000];
 
 void lazyProp(int node, int start, int end) {
     if (lazy[node] == 0) return;
@@ -136,6 +136,8 @@ void solve(int tc) {
         if (!inLine[i]) continue;
         dfs(i);
     }
+
+
 
 
     vector<vector<ll>> query(Q);
