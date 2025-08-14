@@ -1468,7 +1468,7 @@ void dfs2(int x) { // assign dfs order (HLD tree index)
 }
 
 void update(int x, int w) { // modify node x
-    // tree update(1,1,N,in[x], w);
+    // tree update(1,1,idx,in[x], w);
 }
 
 int query(int a, int b) { // get path between a and b
@@ -1476,12 +1476,12 @@ int query(int a, int b) { // get path between a and b
     while (top[a] != top[b]) {
         if (depth[top[a]] < depth[top[b]]) swap(a, b);
         int st = top[a];
-        // update ret with get(1,1,N,in[st],in[a]) ( add, xor, min, max or sth)
+        // update ret with get(1,1,idx,in[st],in[a]) ( add, xor, min, max or sth)
         a = parent[st];
     }
 
     if (depth[a] > depth[b]) swap(a, b);
-    // update ret with get(1,1,N,in[a],in[b]) ( add, xor, min, max or sth)
+    // update ret with get(1,1,idx,in[a],in[b]) ( add, xor, min, max or sth)
     return ret;
 }
 ////////////////////////////////////////////// END of HLD
@@ -1513,4 +1513,5 @@ int main() {
 
     return 0;
 }
+
 
