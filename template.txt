@@ -1432,6 +1432,61 @@ struct BridgeNArticulation { //단절점, 단절선 O(V+E)
     }
 };
 
+///////////////////////// HLD
+
+vector<int> E[100001]; 
+int sz[100001], depth[100001], parent[100001], top[100001], in[100001];
+int hchild[100001]; // heavy child
+
+void dfs1(int x) { // get parent and heavy child of each node
+    sz[x] = 1;
+    for (int& nx : E[x]) {
+        if (parent[x] == nx) continue;
+        depth[nx] = depth[x] + 1;
+        parent[nx] = x;
+        dfs1(nx);
+        sz[x] += sz[nx];
+        if (sz[nx] > sz[hchild[x]]) hchild[x] = nx;
+    }
+}
+
+int idx = 0;
+void dfs2(int x) { // assign dfs order (HLD tree index)
+    idx += 1;
+    in[x] = idx;
+    if (hchild[x]) { // if not leaf
+        top[hchild[x]] = top[x];
+        dfs2(hchild[x]);
+    }
+    for (auto nx : E[x]) {
+        if (parent[x] == nx) continue;
+        if (nx == hchild[x]) continue;
+        top[nx] = nx;
+        dfs2(nx);
+    }
+    // out[x] = idx  // ETT variation
+}
+
+void update(int x, int w) { // modify node x
+    // tree update(1,1,N,in[x], w);
+}
+
+int query(int a, int b) { // get path between a and b
+    int ret = 0;
+    while (top[a] != top[b]) {
+        if (depth[top[a]] < depth[top[b]]) swap(a, b);
+        int st = top[a];
+        // update ret with get(1,1,N,in[st],in[a]) ( add, xor, min, max or sth)
+        a = parent[st];
+    }
+
+    if (depth[a] > depth[b]) swap(a, b);
+    // update ret with get(1,1,N,in[a],in[b]) ( add, xor, min, max or sth)
+    return ret;
+}
+////////////////////////////////////////////// END of HLD
+
+
 //int dx[4] = { -1,0,1,0 }; 
 //int dy[4] = { 0,-1,0,1 }; 
 //int dx[8] = { -1,-1,-1,0,0,1,1,1 };
@@ -1458,3 +1513,4 @@ int main() {
 
     return 0;
 }
+
