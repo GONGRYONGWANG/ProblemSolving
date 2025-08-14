@@ -3,7 +3,9 @@
 #include<iomanip>
 #include<cstdio>
 #include<string>
+#include<cctype>
 #include<vector>
+#include<array>
 #include<utility>
 #include<list>
 #include<queue>
@@ -26,6 +28,7 @@
 #include<cassert>
 #include <climits>
 #include <immintrin.h> // AVX, AVX2, AVX-512 // #pragma GCC optimize ("O3,unroll-loops") //#pragma GCC target ("avx,avx2,fma")
+#include<chrono>
 using namespace std;
 typedef long long ll;
 typedef pair<int, int> pii;
@@ -36,141 +39,129 @@ typedef complex<double> cpx;
 typedef long double ld;
 #define pq priority_queue
 #define endl "\n"
-const ll INF = 1e18 + 7;
-const int inf = 1e9 + 7;
+#define INF ll(2e18)
+const int inf = 1000000007;
 const long double pi = 3.14159265358979323846;
-const string debug = "output: ";
+const string debug = "debug: ";
 #define all(x) (x).begin(), (x).end()
 #include<fstream>
 ifstream fin; ofstream fout;
 
-//int dx[4] = { -1,0,1,0 }; 
-//int dy[4] = { 0,-1,0,1 }; 
+
+//int dx[4] = { 1,0,-1,0 };
+//int dy[4] = { 0,1,0,-1 };
 //int dx[8] = { -1,-1,-1,0,1,1,1,0 };
 //int dy[8] = { -1,0,1,1,1,0,-1,-1 };
 
 ///////////////////////////////////////////////////////////////
+vector<int> E[100001];
+int sz[100001], depth[100001], parent[100001], top[100001], in[100001];
+int hchild[100001]; // heavy child
+
+void dfs1(int x) { // get parent and heavy child of each node
+    sz[x] = 1;
+    for (int& nx : E[x]) {
+        if (parent[x] == nx) continue;
+        depth[nx] = depth[x] + 1;
+        parent[nx] = x;
+        dfs1(nx);
+        sz[x] += sz[nx];
+        if (sz[nx] > sz[hchild[x]]) hchild[x] = nx;
+    }
+}
+
+int idx = 0;
+void dfs2(int x) { // assign dfs order (HLD tree index)
+    idx += 1;
+    in[x] = idx;
+    if (hchild[x]) { // if not leaf
+        top[hchild[x]] = top[x];
+        dfs2(hchild[x]);
+    }
+    for (auto nx : E[x]) {
+        if (parent[x] == nx) continue;
+        if (nx == hchild[x]) continue;
+        top[nx] = nx;
+        dfs2(nx);
+    }
+    // out[x] = idx  // ETT variation
+}
+
+int tree[400000];
+void update(int node, int start, int end, int x, int w) {
+    if (x > end || x < start) return;
+    if (start == end) {
+        tree[node] = w;
+        return;
+    }
+    int mid = (start + end) / 2;
+    update(node * 2, start, mid, x, w);
+    update(node * 2 + 1, mid + 1, end, x, w);
+    tree[node] = max(tree[node * 2], tree[node * 2 + 1]);
+}
+
+int get(int node, int start, int end, int left, int right) {
+    if (left > end || right < start) return 0;
+    if (left <= start && right >= end) return tree[node];
+    int mid = (start + end) / 2;
+    return max(get(node * 2, start, mid, left, right), get(node * 2 + 1, mid + 1, end, left, right));
+}
+
+int N;
+
+int query(int a, int b) { // get path between a and b
+    int ret = 0;
+    while (top[a] != top[b]) {
+        if (depth[top[a]] < depth[top[b]]) swap(a, b);
+        int st = top[a];
+        ret = max(ret, get(1, 1, N, in[st], in[a]));
+        a = parent[st];
+    }
+
+    if (depth[a] > depth[b]) swap(a, b);
+    if (a != b) ret = max(ret, get(1, 1, N, in[hchild[a]], in[b]));
+    return ret;
+}
 ///////////////////////////////////////////////////////////////
 
-vector<pii> E[100001];
-int depth[100001];
-pii parent[100001];
-
-int sqrtN;
-vector<int> Frag[100001];
-vector<vector<int>> F;
-vector<int> FragParent;
-
-void dfs(int x) {
-    for (pii& e : E[x]) {
-        int nx = e.first;
-        if (parent[x].first == nx) continue;
-        parent[nx] = { x, e.second };
-        depth[nx] = depth[x] + 1;
-        dfs(nx);
-        for (int d : Frag[nx]) {
-            Frag[x].push_back(d);
-        }
-        if (Frag[x].size() >= sqrtN) {
-            F.push_back(Frag[x]);
-            FragParent.push_back(x);
-            Frag[x].clear();
-        }
-    }
-    Frag[x].push_back(x);
-}
-
-
-int Fragnum[100001];
-int maxtoFragParent[100001];
-
-void updateFrag(int Fnum) {
-    for (int x : F[Fnum]) {
-        if (parent[x].first == FragParent[Fnum]) maxtoFragParent[x] = parent[x].second;
-        else maxtoFragParent[x] = max(parent[x].second, maxtoFragParent[parent[x].first]);
-    }
-}
 
 void solve(int tc) {
 
-    int N;
     cin >> N;
-    sqrtN = sqrt(N);
 
-    vector<pii> Earr(N);
+    vector<tuple<int, int, int>> edge(N - 1);
     for (int i = 0; i < N - 1; i++) {
         int u, v, w;
         cin >> u >> v >> w;
-        E[u].push_back({ v,w });
-        E[v].push_back({ u,w });
-        Earr[i + 1] = { u,v };
+        edge[i] = { u,v,w };
+        E[u].push_back(v);
+        E[v].push_back(u);
     }
 
-
-    depth[1] = 0;
-    parent[1] = { 0,0 };
-    dfs(1);
-
-    F.push_back(Frag[1]);
-    FragParent.push_back(0);
-
-    reverse(F.begin(), F.end());
-    reverse(FragParent.begin(), FragParent.end());
-    vector<int> FragDepth(F.size());
-
-    for (int i = 0; i < F.size(); i++) {
-        if (i == 0) FragDepth[i] = 0;
-        else FragDepth[i] = FragDepth[Fragnum[FragParent[i]]] + 1;
-        reverse(F[i].begin(), F[i].end());
-        for (int x : F[i]) {
-            Fragnum[x] = i;
-        }
-        updateFrag(i);
+    dfs1(1); dfs2(1);
+    for (auto& [u, v, w] : edge) {
+        if (u == parent[v]) swap(u, v);
+        update(1, 1, N, in[u], w);
     }
 
     int M;
     cin >> M;
     while (M--) {
-        int t;
-        cin >> t;
+        int t; cin >> t;
         if (t == 1) {
             int i, c;
             cin >> i >> c;
-            auto [u, v] = Earr[i];
-            if (depth[u] < depth[v]) swap(u, v);
-            parent[u].second = c;
-            updateFrag(Fragnum[u]);
+            auto& [u, v, w] = edge[i - 1];
+            update(1, 1, N, in[u], c);
         }
         else {
             int u, v;
             cin >> u >> v;
-
-            int ans = 0;
-            while (FragDepth[Fragnum[u]] != FragDepth[Fragnum[v]]) {
-                if (FragDepth[Fragnum[u]] < FragDepth[Fragnum[v]]) swap(u, v);
-                ans = max(ans, maxtoFragParent[u]);
-                u = FragParent[Fragnum[u]];
-            }
-            while (Fragnum[u] != Fragnum[v]) {
-                ans = max(ans, maxtoFragParent[u]);
-                u = FragParent[Fragnum[u]];
-                ans = max(ans, maxtoFragParent[v]);
-                v = FragParent[Fragnum[v]];
-            }
-            if (depth[u] < depth[v]) swap(u, v);
-            while (depth[u] != depth[v]) {
-                ans = max(ans, parent[u].second);
-                u = parent[u].first;
-            }
-            while (u != v) {
-                ans = max(ans, parent[u].second);
-                u = parent[u].first;
-                ans = max(ans, parent[v].second);
-                v = parent[v].first;
-            }
-            cout << ans << endl;
+            cout << query(u, v) << endl;
         }
     }
+
+
 
 
 
