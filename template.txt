@@ -917,6 +917,61 @@ struct Hungarian { // O(N^3)
     }
 
 };
+
+struct GlobalMincut { // StoerWagner O(N^3)
+    int N;
+    vector<vector<ll>> w; // adjacency matrix
+
+    GlobalMincut(int n) : N(n), w(n + 1, vector<ll>(n + 1, 0)) {}
+
+    void add_edge(int u, int v, ll c = 1) {
+        if (u == v) return;
+        w[u][v] += c;
+        w[v][u] += c;
+    }
+
+    ll mincut() {
+        vector<int> v(N + 1);
+        iota(v.begin() + 1, v.end(), 1);
+        ll best = INF;
+        int n = N;
+
+        while (n > 1) {
+            vector<ll> weight(n + 1, 0);
+            vector<char> added(n + 1, 0);
+            int prev = -1, sel = -1;
+
+            for (int i = 1; i <= n; i++) {
+                // pick max-weight vertex not yet added
+                sel = -1;
+                for (int j = 1; j <= n; j++)
+                    if (!added[j] && (sel == -1 || weight[j] > weight[sel]))
+                        sel = j;
+
+                added[sel] = 1;
+                if (i == n) {
+                    // sel is t, prev is s
+                    best = min(best, weight[sel]);
+
+                    // merge sel into prev
+                    for (int j = 1; j <= n; j++) {
+                        if (j == sel) continue;
+                        w[v[prev]][v[j]] += w[v[sel]][v[j]];
+                        w[v[j]][v[prev]] = w[v[prev]][v[j]];
+                    }
+                    v.erase(v.begin() + sel);
+                    n--;
+                    break;
+                }
+                prev = sel;
+                for (int j = 1; j <= n; j++)
+                    if (!added[j]) weight[j] += w[v[sel]][v[j]];
+            }
+        }
+        return best;
+    }
+};
+
 struct GeneralMatch { // Micali-Vazirani O(E*sqrt(V)*(log*V)). reference: https://github.com/ggawryal/MV-matching/tree/main
 
     GeneralMatch(int n) : n(n), adj(n) {}
@@ -1513,5 +1568,6 @@ int main() {
 
     return 0;
 }
+
 
 
