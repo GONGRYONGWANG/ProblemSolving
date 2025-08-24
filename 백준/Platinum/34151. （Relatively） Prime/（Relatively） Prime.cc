@@ -81,7 +81,7 @@ void solve(int tc) {
     if (x == 1) ret = k;
     else ret = x * (powmod(x, k, mod) - 1 + mod) % mod * modinv(x - 1, mod) % mod;
 
-    if (m % n) ret += powmod(p, n, mod);
+    if (m % n) ret += powmod(p, m, mod);
 
 
     cout << ret % mod << endl;
