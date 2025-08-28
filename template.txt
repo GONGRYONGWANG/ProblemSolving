@@ -1417,7 +1417,7 @@ struct TwoSat { // for SCC and TwoSat.
 
 };
 
-struct BridgeNArticulation { //단절점, 단절선 O(V+E)
+struct BridgeNArticulation { //단절점, 단절선 O(V+E) BCC
     int V;
     vector<vector<pair<int, int>>> adj; // {neighbor, edge_id}
 
@@ -1568,6 +1568,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
