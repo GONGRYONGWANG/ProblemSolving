@@ -57,11 +57,8 @@ ifstream fin; ofstream fout;
 
 ///////////////////////////////////////////////////////////////
 
-int board[1001][1001];
 int X[1000001];
 int Y[1000001];
-
-bool ingrid[1000002];
 
 void solve(int tc) {
     
@@ -69,58 +66,25 @@ void solve(int tc) {
     cin >> N;
     for (int i = 1; i <= N; i++) {
         for (int j = 1; j <= N; j++) {
-            cin >> board[i][j];
-            X[board[i][j]] = i;
-            Y[board[i][j]] = j;
+            int x; cin >> x;
+            X[x] = i;
+            Y[x] = j;
         }
     }
 
-    int ret = 1;
+    int ans = 1;
     int l = X[1], r = X[1];
     int a = Y[1], b = Y[1];
-    int mx = 1;
 
-    ingrid[1] = true;
-    int nx = 2;
-
-    while (nx <= N * N) {
-        int s = X[nx], e = X[nx];
-        int c = Y[nx], d = Y[nx];
-        while (s < l) {
-            l -= 1;
-            for (int j = a; j <= b; j++) {
-                mx = max(mx, board[l][j]);
-                ingrid[board[l][j]] = true;
-            }
-        }
-        while (r < e) {
-            r += 1;
-            for (int j = a; j <= b; j++) {
-                mx = max(mx, board[r][j]);
-                ingrid[board[r][j]] = true;
-            }
-        }
-        while (c < a) {
-            a -= 1;
-            for (int i = l; i <= r; i++) {
-                mx = max(mx, board[i][a]);
-                ingrid[board[i][a]] = true;
-            }
-        }
-        while (b < d) {
-            b += 1;
-            for (int i = l; i <= r; i++) {
-                mx = max(mx, board[i][b]);
-                ingrid[board[i][b]] = true;
-            }
-        }
-
-        while (ingrid[nx]) nx += 1;
-
-        if ((r - l + 1) * (b - a + 1) == mx) ret += 1;
+    for (int i = 2; i <= N * N; i++) {
+        l = min(l, X[i]); r = max(r, X[i]);
+        a = min(a, Y[i]); b = max(b, Y[i]);
+        ans += ((r - l + 1) * (b - a + 1) == i);
     }
 
-    cout << ret;
+    cout << ans;
+
+
 
 
 }
