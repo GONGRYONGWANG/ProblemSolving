@@ -57,50 +57,66 @@ ifstream fin; ofstream fout;
 
 ///////////////////////////////////////////////////////////////
 
-int nx[100001][20];
 
-int get(int x, int d) {
-    for (int j = 0; j < 20; j++) {
-        if (d & (1 << j)) x = nx[x][j];
-    }
-    return x;
-}
+int nx[100001][18];
 
 void solve(int tc) {
-    
+
+
     int N, K;
     cin >> N >> K;
 
     for (int i = 1; i <= N; i++) cin >> nx[i][0];
 
-    vector<int> S(N);
-    for (int i = 0; i < N; i++) cin >> S[i];
-
-    for (int j = 1; j < 20; j++) {
+    for (int j = 1; j <= 17; j++) {
         for (int i = 1; i <= N; i++) {
             nx[i][j] = nx[nx[i][j - 1]][j - 1];
         }
     }
 
-    int l = 0;
-    int r = 100001;
-    while (l < r) {
-        int m = (l + r) / 2;
-        vector<int> cnt(N + 1, 0);
-        for (int s : S) {
-            cnt[get(s, m)] += 1;
-        }
-        bool flag = false;
+    vector<int> cnt(N + 1, 0);
+    vector<int> arr(N);
+    for (int i = 0; i < N; i++) {
+        cin >> arr[i];
+        cnt[arr[i]] += 1;
+    }
+
+    bool flag = false;
+    for (int i = 1; i <= N; i++) flag |= (cnt[i] >= K);
+    if (flag) {
+        cout << 1;
+        return;
+    }
+
+    cnt.clear(); cnt.resize(N + 1, 0);
+    for (int x : arr) cnt[nx[x][17]] += 1;
+
+    flag = false;
+    for (int i = 1; i <= N; i++) flag |= (cnt[i] >= K);
+
+    if (!flag) {
+        cout << -1;
+        return;
+    }
+
+    int ret = 0;
+    for (int j = 16; j >= 0; j--) {
+        cnt.clear(); cnt.resize(N + 1, 0);
+        for (int x : arr) cnt[nx[x][j]] += 1;
+        flag = false;
         for (int i = 1; i <= N; i++) {
             flag |= (cnt[i] >= K);
         }
+        if (flag) continue;
 
-        if (flag) r = m;
-        else l = m + 1;
+        for (int& x : arr) {
+            x = nx[x][j];
+        }
+        ret |= (1 << j);
     }
 
-    if (l == 100001) cout << -1;
-    else cout << l + 1;
+    cout << ret + 2;
+
 
 
 
