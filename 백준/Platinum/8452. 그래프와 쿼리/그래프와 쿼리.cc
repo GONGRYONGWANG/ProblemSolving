@@ -115,7 +115,11 @@ void solve(int tc) {
         if (!t) {
             auto& [u, v] = edges[p];
             E[u].push_back(v);
-            update(u);
+            
+            if(dist[v]>dist[u]+1){
+                dist[v] = dist[u]+1;
+                update(v);
+            }
         }
         else {
             if (dist[p] == inf) ret.push_back(-1);
