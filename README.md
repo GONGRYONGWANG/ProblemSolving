@@ -1,4 +1,3 @@
-<br>
 🏆 2025 SCSC Div.2 #1
 <br>
 🏆 LGCPC 2024 장려상
