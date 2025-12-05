@@ -432,12 +432,14 @@ ll xgcd(ll a, ll b) {
 
 
 ll powmod(ll x, ll n, ll mod) {
+    x %= mod
     if (n == 0) return 1;
     if (n % 2) return x * powmod(x, n - 1, mod) % mod;
     ll half = powmod(x, n / 2, mod);
     return half * half % mod;
 }
 ll modinv(ll x, ll mod) { // when mod is primenum
+    x %= mod;
     return powmod(x, mod - 2, mod);
 }
 //const ll Fsize = 1;
@@ -1568,6 +1570,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
