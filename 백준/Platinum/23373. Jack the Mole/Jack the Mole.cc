@@ -63,25 +63,40 @@ ifstream fin; ofstream fout;
 
 
 int arr[301];
+bitset<300001> pre[301];
+bitset<300001> suf[302];
 
 void solve(int tc) {
 
     int N;
     cin >> N;
-    for (int i = 1; i <= N; i++) cin >> arr[i];
+    
+    int total = 0;
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        total += arr[i];
+    }
+
+    pre[0][0] = true;
+    for (int i = 1; i <= N; i++) {
+        pre[i] = (pre[i - 1] | (pre[i - 1] << arr[i]));
+    }
+
+    suf[N+1][0] = true;
+    for (int i = N; i >= 1; i--) {
+        suf[i] = (suf[i + 1] | (suf[i + 1] << arr[i]));
+    }
+
 
     vector<int> ret;
-
     for (int i = 1; i <= N; i++) {
-        bitset<300001> DP;
-        DP[0] = true;
-        int total = 0;
-        for (int j = 1; j <= N; j++) {
-            if (j == i) continue;
-            total += arr[j];
-            DP |= (DP << arr[j]);
+        if ((total - arr[i]) % 2) continue;
+        for (int j = 0; j <= (total - arr[i]) / 2; j++) {
+            if (pre[i - 1][j] && suf[i + 1][(total - arr[i]) / 2 - j]) {
+                ret.push_back(i);
+                break;
+            }
         }
-        if (total % 2 == 0 && DP[total / 2]) ret.push_back(i);
     }
 
     cout << ret.size() << endl;
