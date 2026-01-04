@@ -85,11 +85,6 @@ void solve(int tc) {
         pool.erase(it);
     }
 
-    if (fish.empty()) {
-        cout << 0 << endl << 0;
-        return;
-    }
-
     while (!pool.empty() && !fish.empty() && *fish.begin() < *pool.rbegin()) {
         ll x = *fish.begin();
         fish.erase(fish.begin());
