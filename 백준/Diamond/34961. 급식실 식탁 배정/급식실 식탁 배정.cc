@@ -78,7 +78,7 @@ int get(int node, int start, int end, int idx) {
     if (start == end) return start;
     int mid = (start + end) / 2;
     if (tree[node * 2] >= idx) return get(node * 2, start, mid, idx);
-    else return get(node * 2 + 1, mid, end, idx - tree[node * 2]);
+    else return get(node * 2 + 1, mid + 1, end, idx - tree[node * 2]);
 }
 
 void solve(int tc) {
