@@ -62,7 +62,9 @@ ifstream fin; ofstream fout;
 
 
 int arr[500001];
-vector<pii> E[500001];
+
+pii mx[500001];
+pii mx2[500001];
 
 pii parent[500001][2];
 
@@ -78,31 +80,42 @@ void solve(int tc) {
     int N;
     cin >> N;
     
-    for (int i = 1; i <= N; i++) cin >> arr[i];
+    for (int i = 1; i <= N; i++) {
+        cin >> arr[i];
+        mx[i] = { 0,0 };
+        mx2[i] = { 0,0 };
+    }
 
     for (int i = 0; i < N - 1; i++) {
         int u, v;
         cin >> u >> v;
-        E[u].push_back({ arr[v],v });
-        E[v].push_back({ arr[u],u });
+        if (arr[v] > mx[u].second) {
+            mx2[u] = mx[u];
+            mx[u] = { v,arr[v] };
+        }
+        else if (arr[v] > mx2[u].second) mx2[u] = { v,arr[v] };
+
+        if (arr[u] > mx[v].second) {
+            mx2[v] = mx[v];
+            mx[v] = { u,arr[u] };
+        }
+        else if (arr[u] > mx2[v].second) mx2[v] = { u,arr[u] };
+
     }
 
-    for (int i = 1; i <= N; i++) {
-        sort(E[i].rbegin(), E[i].rend());
-    }
 
     for (int i = 1; i <= N; i++) {
-        int mxidx = E[i].front().second;
-        if (E[mxidx].front().second == i) parent[i][0] = { mxidx,1 };
+        int mxidx = mx[i].first;
+        if (mx[mxidx].first == i) parent[i][0] = { mxidx,1 };
         else parent[i][0] = { mxidx,0 };
 
-        if (E[i].size() == 1) {
+        if (mx2[i].first == 0) {
             parent[i][1] = { i,1 };
             continue;
         }
         
-        mxidx = E[i][1].second;
-        if (E[mxidx].front().second == i) parent[i][1] = { mxidx,1 };
+        mxidx = mx2[i].first;
+        if (mx[mxidx].first == i) parent[i][1] = { mxidx,1 };
         else parent[i][1] = { mxidx,0 };
 
     }
