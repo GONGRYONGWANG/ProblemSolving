@@ -75,19 +75,15 @@ void solve(int tc) {
         ull x = total / b * a;
         ull y = total / b * (b - a);
 
+        if ((x ^ y) != total) continue;
+
         string ret;
+
         for (int j = 0; j < i; j++) {
-            if ((x & (1ull << j)) ^ (y & (1ull << j))) {
-                if (x & (1ull << j)) ret.push_back('*');
-                else ret.push_back('-');
-            }
-            else {
-                ret.clear();
-                break;
-            }
+            if (x & (1ull << j)) ret.push_back('*');
+            else ret.push_back('-');
         }
 
-        if (ret.empty()) continue;
         reverse(ret.begin(), ret.end());
         cout << ret;
         return;
