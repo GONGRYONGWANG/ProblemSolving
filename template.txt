@@ -504,7 +504,7 @@ vector<pair<int, int>> convexHull(vector<pair<int, int>> points) { // 컨벡스 
     lower.pop_back();
     upper.pop_back();
 
-    // 아래쪽과 위쪽을 합쳐 시계 방향으로 반환
+    // 아래쪽과 위쪽을 합쳐 반시계 방향으로 반환
     lower.insert(lower.end(), upper.begin(), upper.end());
     return lower;
 }
@@ -1570,6 +1570,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
