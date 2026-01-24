@@ -38,6 +38,17 @@ const int inf = 1e9 + 7;
 const long double pi = 3.14159265358979323846;
 const string debug = "output: ";
 
+// 랜덤
+#include<random> // rand
+std::mt19937 gen;
+void rng_init() {
+    std::random_device rd;
+    gen.seed(rd());  // main에서 1번
+}
+int randint(int l, int r) {
+    std::uniform_int_distribution<int> dist(l, r);
+    return dist(gen);
+}
 
 struct VectorHasher { // unordered_set<vector<int>,VectorHasher>
     size_t operator()(const vector<int>& V) const {
@@ -1570,6 +1581,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
