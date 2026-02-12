@@ -76,14 +76,14 @@ void solve(int tc) {
     int N, K;
     cin >> N >> K;
 
-    int ret = -2;
+    int ret = 0;
     int a = 0; int b = 0;
 
 
     while (N--) {
         int x, y;
         cin >> x >> y;
-        if (ret != -2) continue;
+        if (ret != 0) continue;
         a += x; b += y;
         x /= 2;
         if (a + x >= b + 50) ret = 1;
@@ -94,7 +94,6 @@ void solve(int tc) {
         else if (a + x >= K) ret = 1;
     }
     
-    if (ret == -2) ret = 0;
     cout << ret;
 
     // cout << "Case #" << tc << ": " << ret << endl;
