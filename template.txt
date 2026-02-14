@@ -82,7 +82,7 @@ struct chash {
     int operator()(int x) const { return x ^ RANDOM; }
 };
 
-bool coordinatecmp(pll a, pll b) { // 각도 정렬
+bool coordinatecmp(pll a, pll b) { // 반시계 각도 정렬
     // 1. 사분면 비교 (y > 0 이면 위쪽, y == 0 이면 x > 0 이면 오른쪽)
     auto half = [](pair<long long, long long> p) {
         if (p.second > 0) return 1;
@@ -1580,6 +1580,7 @@ int main() {
 
     return 0;
 }
+
 
 
 
