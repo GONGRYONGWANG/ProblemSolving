@@ -79,41 +79,17 @@ void solve(int tc) {
     ll N;
     cin >> N;
 
-    ll x = N;
-    vector<ll> prime;
-    for (int i = 2; i <= sqrt(N); i++) {
-        if (x % i) continue;
-        prime.push_back(i);
-        while(x % i == 0) {
-            x /= i;
-        }
+    ll ret = N;
+    
+    for (int i = 2; i <= 1e6; i++) {
+        if (N % i) continue;
+        while (N % i == 0) N /= i;
+        ret = ret / i * (i - 1);
     }
 
-    if (x != 1) prime.push_back(x);
-
-    // prime.size()<=11
-
-    ll ret = 0;
-
-    int n = prime.size();
-    for (int bit = 0; bit < (1 << n); bit++) {
-
-        ll d = 1;
-        bool b = false;
-        for (int i = 0; i < n; i++) {
-            if (bit & (1 << i)) {
-                d *= prime[i];
-                b = !b;
-            }
-        }
-
-        if (b)  ret -= N / d;
-        else ret += N / d;
-
-    }
+    if (N != 1) ret = ret / N * (N - 1);
 
     cout << ret;
-
 
 
 
