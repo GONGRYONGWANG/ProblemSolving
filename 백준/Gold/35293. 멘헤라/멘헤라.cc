@@ -95,7 +95,7 @@ void solve(int tc) {
             
             if (d % 18 == 0) ans = min(ans, ret + d / 18);
 
-            for (int k = 0; k < 100; k++) {
+            for (int k = 0; k < 9; k++) {
                 d += 4;
                 ret += 1;
                 if (d % 18 == 0) ans = min(ans, ret + d / 18);
