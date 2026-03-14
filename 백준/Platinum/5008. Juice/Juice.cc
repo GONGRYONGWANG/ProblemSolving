@@ -70,42 +70,114 @@ ifstream fin; ofstream fout;
 
 ///////////////////////////////////////////////////////////////
 
-int P[1001], R[1001], C[1001];
-int ind[1001];
-int DP[1001][101];
+
+
+vector<int> E[1001];
+int sz[1001], top[1001], in[1001];
+int hchild[1001];
+
+void dfs1(int x) {
+    sz[x] = 1;
+    for (int& nx : E[x]) {
+        dfs1(nx);
+        sz[x] += sz[nx];
+        if (hchild[x] == 0 || sz[nx] > sz[hchild[x]]) hchild[x] = nx;
+    }
+}
+
+int idx = 0;
+void dfs2(int x) {
+    in[x] = ++idx;
+    if (hchild[x]) {
+        top[hchild[x]] = top[x];
+        dfs2(hchild[x]);
+    }
+    for (int& nx : E[x]) {
+        if (nx == hchild[x]) continue;
+        top[nx] = nx;
+        dfs2(nx);
+    }
+}
+
+int p[1001], r[1001], c[1001];
+
+
+int tree[4010];
+int lazy[4010];
+
+void lazyProp(int node, int start, int end) {
+    if (lazy[node] == 0) return;
+    tree[node] += lazy[node];
+    if (start != end) {
+        lazy[node * 2] += lazy[node];
+        lazy[node * 2 + 1] += lazy[node];
+    }
+    lazy[node] = 0;
+}
+
+void update(int node, int start, int end, int left, int right , int v) {
+    lazyProp(node, start, end);
+    if (left > end || right < start) return;
+    if (left <= start && right >= end) {
+        lazy[node] += v;
+        lazyProp(node, start, end);
+        return;
+    }
+    int mid = (start + end) / 2;
+    update(node * 2, start, mid, left, right, v);
+    update(node * 2 + 1, mid + 1, end, left, right, v);
+    tree[node] = min(tree[node * 2], tree[node * 2 + 1]);
+}
+
+int get(int node, int start, int end, int left, int right) {
+    lazyProp(node, start, end);
+    if (left > end || right < start) return inf;
+    if (left <= start && right >= end) return tree[node];
+    int mid = (start + end) / 2;
+    return min(get(node * 2, start, mid, left, right), get(node * 2 + 1, mid + 1, end, left, right));
+}
+
+
 
 void solve(int tc) {
 
     int N;
     cin >> N;
 
+    vector<pii> arr(N);
     for (int i = 1; i <= N; i++) {
-        cin >> P[i] >> R[i] >> C[i];
-        ind[P[i]] += 1;
-        for (int j = R[i]; j <= C[i]; j++) DP[i][j] = 1;
+        cin >> p[i] >> r[i] >> c[i];
+        E[p[i]].push_back(i);
+        arr[i - 1] = { r[i],i };
     }
 
-    queue<int> q;
+    dfs1(0);
+    dfs2(0);
+
+    update(1, 1, N + 1, 1, 1, inf);
     for (int i = 1; i <= N; i++) {
-        if (ind[i] == 0) q.push(i);
+        update(1, 1, N + 1, in[i], in[i], c[i]);
     }
+
+    sort(arr.begin(), arr.end());
 
     int ret = 0;
-    while (!q.empty()) {
-        int x = q.front();
-        q.pop();
-        int p = P[x];
-        if (p == 0) {
-            ret += DP[x][C[x]];
-            continue;
+    for (auto& [r, x] : arr) {
+        int mn = inf;
+        int cur = x;
+        while (cur != 0) {
+            mn = min(mn, get(1, 1, N + 1, in[top[cur]], in[cur]));
+            cur = p[top[cur]];
         }
-        for (int i = C[p]; i >= 0; i--) {
-            for (int j = min(C[x], C[p] - i); j >= 0; j--) {
-                DP[p][i + j] = max(DP[p][i + j], DP[p][i] + DP[x][j]);
-            }
+
+        if (mn < r) continue;
+        ret += 1;
+        cur = x;
+        while (cur != 0) {
+            update(1, 1, N + 1, in[top[cur]], in[cur], -r);
+            cur = p[top[cur]];
         }
-        ind[p] -= 1;
-        if (ind[p] == 0) q.push(p);
+        
     }
 
     cout << ret;
