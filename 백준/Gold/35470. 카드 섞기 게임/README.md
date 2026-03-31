@@ -1,4 +1,4 @@
-# [Gold II] 카드 섞기 게임 - 35470 
+# [Gold III] 카드 섞기 게임 - 35470 
 
 [문제 링크](https://www.acmicpc.net/problem/35470) 
 
