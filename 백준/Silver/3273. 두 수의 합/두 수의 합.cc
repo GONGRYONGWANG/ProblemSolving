@@ -70,7 +70,7 @@ ifstream fin; ofstream fout;
 
 ///////////////////////////////////////////////////////////////
 
-int st[1000001];
+vector<bool> st(1000001,false);
 int arr[100000];
 
 void solve(int tc) {
@@ -85,7 +85,7 @@ void solve(int tc) {
     for (int i = 0; i < N; i++) {
         int x = arr[i];
         if (X - x >= 1 && X - x <= 1000000) ret += st[X - x];
-        st[x] = 1;
+        st[x] = true;
     }
 
     cout << ret;
