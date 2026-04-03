@@ -101,8 +101,9 @@ void solve(int tc) {
             cout << d;
             return;
         }
-        if (x + K < N && arr[x] == (bit >> (K - 1)) && !visited[x + 1][(bit << 1) % (1 << K)]) {
-            q.push_front({ x + 1, (bit << 1) % (1 << K), d });
+        if (x + K < N && arr[x] == (bit >> (K - 1)) && !visited[x + 1][(bit - (bit & (1 << (K - 1)))) << 1]) {
+            q.push_front({ x + 1, (bit - (bit & (1 << (K - 1)))) << 1, d });
+            
         }
         bit ^= (1 << K) - 1;
         for (int j = 0; j < K; j++) {
