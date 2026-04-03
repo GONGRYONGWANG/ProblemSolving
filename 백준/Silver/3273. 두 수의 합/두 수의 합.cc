@@ -70,7 +70,7 @@ ifstream fin; ofstream fout;
 
 ///////////////////////////////////////////////////////////////
 
-unordered_set<int> st;
+int st[1000001];
 int arr[100000];
 
 void solve(int tc) {
@@ -84,8 +84,8 @@ void solve(int tc) {
     int ret = 0;
     for (int i = 0; i < N; i++) {
         int x = arr[i];
-        ret += st.count(X - x);
-        st.insert(x);
+        if (X - x >= 1 && X - x <= 1000000) ret += st[X - x];
+        st[x] = 1;
     }
 
     cout << ret;
