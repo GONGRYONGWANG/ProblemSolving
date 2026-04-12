@@ -1,87 +1,141 @@
-#pragma warning(disable:4996) 
+// template: https://github.com/GONGRYONGWANG/ProblemSolving/blob/main/template.txt
 #include<iostream>
 #include<iomanip>
 #include<cstdio>
 #include<string>
+#include<cctype>
 #include<vector>
+#include<array>
 #include<utility>
 #include<list>
 #include<queue>
 #include<stack>
 #include<deque>
+#include<tuple>
 #include<set>
 #include<unordered_set>
 #include<map>
 #include<unordered_map>
 #include<cmath>
 #include<algorithm>
+#include<bitset>
 #include<cstdlib>
 #include<ctime> // srand(time(0))
 #include<regex> // 정규표현식
-#include<random> // rand
-#include<complex> // complex
+#include<complex> // complex number
 #include<numeric>
+#include<cassert>
+#include <climits>
+#include <immintrin.h> // AVX, AVX2, AVX-512 // #pragma GCC optimize ("O3,unroll-loops") //#pragma GCC target ("avx,avx2,fma")
+#include<chrono>
 using namespace std;
-typedef long long ll;
+using ll = long long;
 typedef pair<int, int> pii;
 typedef pair<ll, ll> pll;
 typedef unsigned long long ull;
 typedef unsigned int uint;
 typedef complex<double> cpx;
+typedef long double ld;
 #define pq priority_queue
 #define endl "\n"
-#define inf 1e9
-//int dx[4] = { 1,-1,0,0 };
-//int dy[4] = { 0,0,1,-1 };
-//int dx[8] = { 1,1,1,-1,-1,-1,0,0 };
-//int dy[8] = { 1,0,-1,1,0,-1,1,-1 };
-const double pi = 3.14159265358979323846;
+#define INF ll(2e18)
+const int inf = 1000000007;
+const long double pi = acosl(-1);
+const string debug = "debug: ";
+#define all(x) (x).begin(), (x).end()
 
-
-int N, M;
-vector<int> E[10001];
-int order[10001];
-int cnt;
-bool ap[10001];
-int dfs(int node, bool root) {
-    cnt += 1;
-    int ret = order[node] = cnt;
-    int childn = 0;
-    for (int i = 0; i < E[node].size(); i++) {
-        int next = E[node][i];
-        if (!order[next]) {
-            childn += 1;
-            int child_depth = dfs(next, false);
-            ret = min(child_depth, ret);
-            if (!root && child_depth >= order[node]) ap[node] = true;
-        }
-        else ret = min(ret, order[next]);
-    }
-    if (root && childn >= 2) ap[node] = true;
-    return ret;
+#include<random> // rand
+std::mt19937 gen;
+void rng_init() {
+    std::random_device rd;
+    gen.seed(rd());  // main에서 1번
 }
-int main() {
-    ios_base::sync_with_stdio(false); cout.tie(NULL); cin.tie(NULL);
-    cin >> N >> M;
-    for (int i = 0; i < M; i++) {
-        int a, b;
-        cin >> a >> b;
-        E[a].push_back(b);
-        E[b].push_back(a);
-    }
-    cnt = 0;
-    for (int i = 1; i <= N; i++) {
-        if (!order[i]) dfs(i, 1);
-    }
-    int ans = 0;
-    for (int i = 1; i <= N; i++) {
-        if (ap[i]) ans += 1;
-    }
-    cout << ans << endl;
-    for (int i = 1; i <= N; i++) {
-        if (ap[i]) cout << i << " ";
+int randint(int l, int r) {
+    std::uniform_int_distribution<int> dist(l, r);
+    return dist(gen);
+}
+
+#include<fstream>
+ifstream fin; ofstream fout;
+
+//#define cin fin 
+//#define cout fout
+
+//int dx[4] = { -1,0,1,0 };
+//int dy[4] = { 0,1,0,-1 };
+//int dx8[8] = { -1,-1,-1,0,1,1,1,0 };
+//int dy8[8] = { -1,0,1,1,1,0,-1,-1 };
+
+///////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////
+
+vector<int> E[10001];
+int timer = 0;
+int low[10001];
+int ord[10001];
+bool ap[10001];
+void dfs(int x, int p) {
+    low[x] = ord[x] = ++timer;
+    int child = 0;
+    for (int nx : E[x]) {
+        if (!ord[nx]) {
+            child += 1;
+            dfs(nx, x);
+            low[x] = min(low[x], low[nx]);
+            if (p && low[nx] >= ord[x]) {
+                ap[x] = true;
+            }
+        }
+        else if (nx != p) {
+            low[x] = min(low[x], ord[nx]);
+        }
     }
 
+    if (!p && child > 1) ap[x] = true;
+
+}
+
+void solve(int tc) {
+
+    int N, M;
+    cin >> N >> M;
+
+    while (M--) {
+        int u, v;
+        cin >> u >> v;
+        E[u].push_back(v);
+        E[v].push_back(u);
+    }
+
+    for (int i = 1; i <= N; i++) {
+        if (ord[i]) continue;
+        dfs(i, 0);
+    }
+
+    vector<int> ret;
+    for (int i = 1; i <= N; i++) {
+        if (ap[i]) ret.push_back(i);
+    }
+    sort(ret.begin(), ret.end());
+
+    cout << ret.size() << endl;
+    for (int x : ret) cout << x << " ";
+
+
+    // cout << "Case #" << tc << ": " << ret << endl;
+}
+
+
+int main() {
+    //fin.open("input.txt"); fout.open("output.txt");
+    ios_base::sync_with_stdio(false); cin.tie(NULL);
+    rng_init();
+    int T = 1;
+    //cin >> T;
+    for (int tc = 1; tc <= T; tc++) {
+        solve(tc);
+    }
 
     return 0;
 }
