@@ -1429,71 +1429,98 @@ struct TwoSat { // for SCC and TwoSat.
 
 };
 
-struct BridgeNArticulation { //단절점, 단절선 O(V+E) BCC
-    int V;
-    vector<vector<pair<int, int>>> adj; // {neighbor, edge_id}
+struct BlockCutTree { // BCC 
+    int n;
+    vector<vector<pair<int, int>>> g;   // {to, edge_id}
+    vector<int> disc, low, isCut;
+    vector<pair<int, int>> bridges;
+    vector<pair<int, int>> estack;      // edge stack (u, v)
+    vector<vector<int>> bcc;           // each BCC = list of vertices
+    vector<vector<int>> tree;          // block-cut tree
+    int timer = 0;
 
-    vector<int> discoveryTime, low;
-    vector<bool> visited;
-    int time;
-
-    vector<bool> isBridge;            // edge_id -> true if it's a bridge
-    vector<bool> isArticulationPoint; // node -> true if it's an articulation point
-    vector<pair<int, int>> edges;     // edge_id -> (u, v) 저장
-
-    int edgeCount = 0;
-
-    BridgeNArticulation(int vertices)
-        : V(vertices),
-        adj(vertices),
-        discoveryTime(vertices, -1),
-        low(vertices, -1),
-        visited(vertices, false),
-        time(0),
-        isArticulationPoint(vertices, false) {}
-
-    void addEdge(int u, int v) {
-        adj[u].emplace_back(v, edgeCount);
-        adj[v].emplace_back(u, edgeCount);
-        edges.emplace_back(u, v);
-        ++edgeCount;
+    BlockCutTree(int n) : n(n) {
+        g.assign(n + 1, {});
+        disc.assign(n + 1, 0);
+        low.assign(n + 1, 0);
+        isCut.assign(n + 1, 0);
     }
 
-    void dfs(int u, int parent, int parentEdgeId) {
-        visited[u] = true;
-        discoveryTime[u] = low[u] = time++;
-        int children = 0;
+    void addEdge(int id, int u, int v) {
+        g[u].push_back({ v, id });
+        g[v].push_back({ u, id });
+    }
 
-        for (auto [v, edgeId] : adj[u]) {
-            if (!visited[v]) {
-                ++children;
-                dfs(v, u, edgeId);
+    void dfs(int u, int parentEdge = -1) {
+        disc[u] = low[u] = ++timer;
+        int child = 0;
+
+        for (auto [v, eid] : g[u]) {
+            if (eid == parentEdge) continue;
+
+            if (!disc[v]) {
+                child++;
+                estack.push_back({ u, v });
+
+                dfs(v, eid);
 
                 low[u] = min(low[u], low[v]);
 
-                if (low[v] > discoveryTime[u]) {
-                    isBridge[edgeId] = true;
+                // bridge
+                if (low[v] > disc[u]) {
+                    bridges.push_back({ u, v });
                 }
 
-                if (parent != -1 && low[v] >= discoveryTime[u]) {
-                    isArticulationPoint[u] = true;
+                // BCC boundary
+                if (low[v] >= disc[u]) {
+                    if (parentEdge != -1) isCut[u] = 1;
+
+                    vector<int> comp;
+                    while (true) {
+                        auto [a, b] = estack.back();
+                        estack.pop_back();
+                        comp.push_back(a);
+                        comp.push_back(b);
+                        if (a == u && b == v) break;
+                    }
+
+                    sort(comp.begin(), comp.end());
+                    comp.erase(unique(comp.begin(), comp.end()), comp.end());
+                    bcc.push_back(comp);
                 }
             }
-            else if (edgeId != parentEdgeId) {
-                low[u] = min(low[u], discoveryTime[v]);
+            else if (disc[v] < disc[u]) {
+                // back edge to ancestor
+                estack.push_back({ u, v });
+                low[u] = min(low[u], disc[v]);
             }
         }
 
-        if (parent == -1 && children > 1) {
-            isArticulationPoint[u] = true;
+        if (parentEdge == -1 && child >= 2) {
+            isCut[u] = 1;
         }
     }
 
-    void get() {
-        isBridge.assign(edgeCount, false);
-        for (int i = 0; i < V; ++i) {
-            if (!visited[i]) {
-                dfs(i, -1, -1);
+    void build() {
+        for (int i = 1; i <= n; i++) {
+            if (!disc[i]) {
+                dfs(i);
+            }
+        }
+
+        // block-cut tree:
+        // 1..n          : original vertices (only articulation points will actually be used)
+        // n+1..n+bccCnt : block nodes
+        int bccCnt = (int)bcc.size();
+        tree.assign(n + bccCnt + 1, {});
+
+        for (int i = 0; i < bccCnt; i++) {
+            int blockNode = n + 1 + i;
+            for (int v : bcc[i]) {
+                if (isCut[v]) {
+                    tree[blockNode].push_back(v);
+                    tree[v].push_back(blockNode);
+                }
             }
         }
     }
