@@ -1,0 +1,54 @@
+}
+
+
+void solve() {
+    cin >> N;
+    for(ll i = 0; i <= N; i++) p[i] = i;
+    v.resize(N);
+    for(auto &i : v) {
+        cin >> i.x >> i.y >> i.c;
+        total += i.c;
+    }
+
+    vector<pair<ll, pll>> edge;
+    for(ll i = 0; i < N; i++) {
+        for(ll j = i+1; j < N; j++) {
+            ll cost = llabs(v[i].x - v[j].x) + llabs(v[i].y - v[j].y) + v[i].c + v[j].c;
+            edge.push_back({cost, {i, j}});
+        }
+    }
+
+    sort(edge.begin(), edge.end());
+
+    
+    for(auto i : edge) {
+        ll cost = i.X;
+        ll u = i.Y.X;
+        ll v = i.Y.Y;
+
+        if(find(u) == find(v)) continue;
+
+        Merge(u, v);
+        allCost += cost;
+    }
+
+    for(ll i = 0; i < N; i++) {
+        cout << allCost - total + v[i].c << ' ';
+    }
+
+}
+
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+
+    int Tc = 1;
+    // cin >> Tc;
+    for (int tt = 1; tt <= Tc; tt++) {
+        solve();
+    }
+
+    return 0;
+}
