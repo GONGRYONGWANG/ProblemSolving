@@ -1,0 +1,16 @@
+from sys import stdin; input = stdin.readline
+n = int(input())
+cap = [*map(int,input().split())]
+mem = [*map(int,input().split())]
+lazy = 0
+stacks = [[mem[i],cap[i]-mem[i]] for i in range(n)]
+stacks.sort(key=lambda x:-x[1])
+while stacks:
+    temp,no = 0,0
+    while stacks[-1][-1] < lazy:
+        x,y = stacks.pop(); temp += x//2; no += 1
+        if len(stacks) == 0: break
+    else:
+        lazy += temp + (lazy//2)*no
+        if no == 0: break
+print(n-len(stacks))
