@@ -425,20 +425,17 @@ ll lcm(ll a, ll b) {
     ll g = gcd(a, b);
     return a / g * b;
 }
-ll xgcd(ll a, ll b) {
-    ll r1 = a; ll r2 = b;
-    ll s1 = 1; ll s2 = 0;
-    ll t1 = 0; ll t2 = 1;
-    while (1) {
-        ll q = r1 / r2;
-        ll r = r1 - q * r2;
-        ll s = s1 - q * s2;
-        ll t = t1 - q * t2;
-        if (r == 0) return s2;
-        r1 = r2; r2 = r;
-        s1 = s2; s2 = s;
-        t1 = t2; t2 = t;
+pll xgcd(ll a, ll b) {
+    if (b == 0) {
+        return {1, 0};
     }
+
+    auto [x1, y1] = xgcd(b, a % b);
+
+    ll x = y1;
+    ll y = x1 - (a / b) * y1;
+
+    return {x, y};
 }
 
 
